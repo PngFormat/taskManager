@@ -2,14 +2,15 @@ import { useState } from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Layout from "./layouts/Layout";
 import Home from "./pages/Home";
-import Calendar from "./pages/Calendar";
+import Calendar from "./pages/Calendar.tsx";
 import Tasks from "./pages/Tasks";
 import Settings from "./pages/Settings";
+import dayjs from "dayjs";
 
 function App() {
     const [tasks, setTasks] = useState([
-        { id: 1, title: "Закончить макет", completed: false },
-        { id: 2, title: "Купить продукты", completed: true },
+        { id: 1, title: "Закончить макет", completed: false, dueDate: "2025-08-29" },
+        { id: 2, title: "Купить продукты", completed: true, dueDate: "2025-08-24" },
     ]);
 
     const addTask = (title) => {
@@ -17,6 +18,7 @@ function App() {
             id: Date.now(),
             title,
             completed: false,
+            dueDate: dayjs().add(1, "day").format("YYYY-MM-DD")
         };
         setTasks((prev) => [newTask, ...prev]);
     };
@@ -46,7 +48,7 @@ function App() {
                             />
                         }
                     />
-                    <Route path="calendar" element={<Calendar />} />
+                    <Route path="calendar" element={<Calendar tasks={tasks} />} />
                     <Route
                         path="tasks"
                         element={
