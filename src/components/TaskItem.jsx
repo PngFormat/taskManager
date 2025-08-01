@@ -5,9 +5,14 @@ export default function TaskItem({ task, onToggle, onDelete }) {
                 task.completed ? "bg-green-100 line-through text-gray-500" : "bg-white"
             }`}
         >
-      <span onClick={onToggle} className="cursor-pointer flex-1">
-        {task.title}
-      </span>
+        <div
+            className="flex-1 cursor-pointer"
+            onClick={onToggle}
+        >
+            <div className="font-medium">{task.title}</div>
+            <div className="font-sm text-gray-500">До: {task.dueDate}</div>
+
+        </div>
             <button
                 onClick={onDelete}
                 className="text-sm text-red-600 hover:underline ml-4"

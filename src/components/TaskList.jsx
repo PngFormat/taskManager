@@ -6,14 +6,17 @@ export default function TaskList({ tasks, onToggle, onDelete }) {
 
     return (
         <div className="space-y-2">
-            {tasks.map((task) => (
-                <TaskItem
-                    key={task.id}
-                    task={task}
-                    onToggle={() => onToggle(task.id)}
-                    onDelete={() => onDelete(task.id)}
-                />
-            ))}
+            {tasks.map((task) => {
+                console.log("TASK:", task); // <- Временный лог
+                return (
+                    <TaskItem
+                        key={task.id}
+                        task={task}
+                        onToggle={() => onToggle(task.id)}
+                        onDelete={() => onDelete(task.id)}
+                    />
+                );
+            })}
         </div>
     );
 }

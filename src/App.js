@@ -13,14 +13,40 @@ function App() {
         { id: 2, title: "Купить продукты", completed: true, dueDate: "2025-08-24" },
     ]);
 
-    const addTask = (title) => {
+    const suggestDate = () => {
+        const taskCountByDate = {};
+
+        tasks.forEach((task) => {
+            taskCountByDate[task.dueDate] = (taskCountByDate[task.dueDate] || 0) + 1;
+        });
+
+        for (let i = 0; i < 7; i++) {
+            const date  = dayjs().add(i, "day").format("YYYY-MM-DD")
+            if ((taskCountByDate[date] || 0) < 3) return date;
+        }
+
+        return dayjs().add(1, "day").format("YYYY-MM-DD");
+    }
+
+    const addTask = ({ title, dueDate }) => {
+        const finalDueDate = dueDate || suggestDate();
+
         const newTask = {
             id: Date.now(),
             title,
             completed: false,
-            dueDate: dayjs().add(1, "day").format("YYYY-MM-DD")
+            dueDate: finalDueDate,
         };
-        setTasks((prev) => [newTask, ...prev]);
+        setTasks((prev) => {
+            const updated = [newTask, ...prev];
+
+            const count = updated.filter((t) => t.dueDate === finalDueDate).length;
+            if (count > 3) {
+                alert(`⚠️ На ${finalDueDate} уже ${count} задач(и). Подумай, стоит ли добавлять ещё.`);
+            }
+            return updated;
+        });
+
     };
 
     const toggleTask = (id) => {
