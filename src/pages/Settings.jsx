@@ -1,12 +1,12 @@
-import {useState} from "react";
+import {useEffect, useState} from "react";
 
-export default function Settings() {
+export default function Settings({ maxTasksPerDay, setMaxTasksPerDay }) {
     const [username, setUsername] = useState("Ім'я користувача");
     const [email, setEmail] = useState("example@gmail.com");
     const [darkMode, setDarkMode] = useState(false);
     const [notifications, setNotifications] = useState(true);
     const [language, setLanguage] = useState("ua");
-
+    const [localMaxTasks, setLocalMaxTasks] = useState(maxTasksPerDay);
 
     const handleReset = () => {
         // eslint-disable-next-line no-restricted-globals
@@ -16,7 +16,20 @@ export default function Settings() {
         }
     };
 
+    const handleSave = () => {
+        setMaxTasksPerDay(localMaxTasks);
+        localStorage.setItem("maxTasksPerDay", localMaxTasks.toString());
+        alert("Налаштування збережено!");
+    };
 
+    useEffect(() => {
+        const saveLimit = localStorage.getItem("maxTasksPerDay");
+        if (saveLimit) setMaxTasksPerDay(Number(saveLimit))
+    }, []);
+
+    useEffect(() => {
+        localStorage.setItem("maxTasksPerDay", maxTasksPerDay.toString());
+    },[maxTasksPerDay]);
 
     return (
         <div className="max-w-2xl mx-auto py-10 px-4 space-y-6">
@@ -38,6 +51,21 @@ export default function Settings() {
                     type="email"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
+                    className="w-full border rounded px-3 py-2"
+                />
+            </div>
+
+            <div>
+                <label className="block font-semibold mb-1">📅 Максимум задач на день</label>
+                <input
+                    type="number"
+                    min={1}
+                    max={50}
+                    value={localMaxTasks}
+                    onChange={(e) => {
+                        const value = Math.max(1, Math.min(50, Number(e.target.value)));
+                        setLocalMaxTasks(value);
+                    }}
                     className="w-full border rounded px-3 py-2"
                 />
             </div>
@@ -81,6 +109,15 @@ export default function Settings() {
                     className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600"
                 >
                     🗑 Скинути всі задачі
+                </button>
+            </div>
+
+            <div className="pt-6">
+                <button
+                    onClick={handleSave}
+                    className="bg-green-500 text-white px-4 py-2 rounded hover:bg-red-600"
+                >
+                    🗑 Зберегти зміни
                 </button>
             </div>
         </div>

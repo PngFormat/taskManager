@@ -12,6 +12,12 @@ function App() {
         { id: 1, title: "Закончить макет", completed: false, dueDate: "2025-08-29" },
         { id: 2, title: "Купить продукты", completed: true, dueDate: "2025-08-24" },
     ]);
+    const [maxTasksPerDay, setMaxTasksPerDay] = useState(() => {
+        const saved = localStorage.getItem("maxTasksPerDay");
+        return saved ? Number(saved) : 3;
+    })
+
+
 
     const suggestDate = () => {
         const taskCountByDate = {};
@@ -28,8 +34,33 @@ function App() {
         return dayjs().add(1, "day").format("YYYY-MM-DD");
     }
 
+    const getBestDay = () => {
+        const taskCountByDate = {};
+
+        tasks.forEach(task => {
+            taskCountByDate[task.dueDate] = (taskCountByDate[task.dueDate] || 0) + 1;
+        });
+
+        for (let i = 0; i < 7; i++) {
+            const date = dayjs().add(i, "day").format("YYYY-MM-DD");
+            if ((taskCountByDate[date] || 0) < maxTasksPerDay) {
+                return date;
+            }
+        }
+
+        return dayjs().add(1, "day").format("YYYY-MM-DD");
+
+    }
+
     const addTask = ({ title, dueDate }) => {
         const finalDueDate = dueDate || suggestDate();
+
+        const countForDate = tasks.filter((t) => t.dueDate === finalDueDate).length;
+
+        if (countForDate >= maxTasksPerDay) {
+            alert(`❌ Ви вже досягли ліміту задач (${maxTasksPerDay}) на ${finalDueDate}`);
+            return;
+        }
 
         const newTask = {
             id: Date.now(),
@@ -59,6 +90,8 @@ function App() {
         setTasks((prev) => prev.filter((t) => t.id !== id));
     };
 
+    const bestDay = getBestDay();
+
     return (
         <BrowserRouter>
             <Routes>
@@ -71,6 +104,7 @@ function App() {
                                 addTask={addTask}
                                 toggleTask={toggleTask}
                                 deleteTask={deleteTask}
+                                bestDay={bestDay}
                             />
                         }
                     />
@@ -86,7 +120,11 @@ function App() {
                             />
                         }
                     />
-                    <Route path="settings" element={<Settings />} />
+                    <Route path="settings" element={
+                        <Settings
+                            maxTasksPerDay={maxTasksPerDay}
+                            setMaxTasksPerDay={setMaxTasksPerDay}
+                    />} />
                 </Route>
             </Routes>
         </BrowserRouter>
