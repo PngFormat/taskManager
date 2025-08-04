@@ -6,6 +6,7 @@ import Calendar from "./pages/Calendar.tsx";
 import Tasks from "./pages/Tasks";
 import Settings from "./pages/Settings";
 import dayjs from "dayjs";
+import FocusMode from "./pages/FocusMode.tsx";
 
 function App() {
     const [tasks, setTasks] = useState([
@@ -125,7 +126,19 @@ function App() {
                             maxTasksPerDay={maxTasksPerDay}
                             setMaxTasksPerDay={setMaxTasksPerDay}
                     />} />
+                    <Route
+                        path="focus-mode"
+                        element={
+                            <FocusMode
+                                tasks={tasks}
+                                toggleTask={toggleTask}
+                                deleteTask={deleteTask}
+                            />
+                        }
+                    />
+
                 </Route>
+
             </Routes>
         </BrowserRouter>
     );
