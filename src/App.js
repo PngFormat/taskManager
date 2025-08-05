@@ -10,9 +10,10 @@ import FocusMode from "./pages/FocusMode.tsx";
 
 function App() {
     const [tasks, setTasks] = useState([
-        { id: 1, title: "Закончить макет", completed: false, dueDate: "2025-08-29" },
-        { id: 2, title: "Купить продукты", completed: true, dueDate: "2025-08-24" },
+        { id: "1", title: "Закончить макет", completed: false, dueDate: "2025-08-29" },
+        { id: "2", title: "Купить продукты", completed: true, dueDate: "2025-08-24" },
     ]);
+
     const [maxTasksPerDay, setMaxTasksPerDay] = useState(() => {
         const saved = localStorage.getItem("maxTasksPerDay");
         return saved ? Number(saved) : 3;
