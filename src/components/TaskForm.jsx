@@ -2,44 +2,57 @@ import { useState } from "react";
 
 export default function TaskForm({ onAdd }) {
     const [title, setTitle] = useState("");
-    const [dueDate, setDueDate] = useState(() => {
-        const today = new Date();
-        return today.toISOString().split("T")[0];
-    })
+    const [dueDate, setDueDate] = useState("");
+    const [priority, setPriority] = useState("medium");
+    const [tagsInput, setTagsInput] = useState("");
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        if (!title.trim()) return;
-        onAdd({
-            title: title.trim(),
-            dueDate,
-        });
+
+        const tags = tagsInput.split(",").map(t => t.trim()).filter(t => t);
+
+        onAdd({ title, dueDate, priority, tags });
+
         setTitle("");
-        setDueDate(new Date().toISOString().split("T")[0]);
+        setDueDate("");
+        setPriority("medium");
+        setTagsInput("");
     };
 
-    console.log("Current dueDate:", dueDate);
-
     return (
-        <form onSubmit={handleSubmit} className="mb-6 flex gap-2">
+        <form onSubmit={handleSubmit} className="space-y-2 mb-4">
             <input
                 type="text"
-                placeholder="Нова задача..."
-                className="flex-1 p-2 border rounded"
+                placeholder="Новая задача"
                 value={title}
-                onChange={(e) => setTitle(e.target.value)}
+                onChange={e => setTitle(e.target.value)}
+                required
+                className="w-full border p-2 rounded"
             />
             <input
                 type="date"
-                className="p-2 border rounded cursor-pointer"
                 value={dueDate}
-                onChange={(e) => setDueDate(e.target.value)}
+                onChange={e => setDueDate(e.target.value)}
+                className="w-full border p-2 rounded"
             />
-            <button
-                type="submit"
-                className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
+            <select
+                value={priority}
+                onChange={e => setPriority(e.target.value)}
+                className="w-full border p-2 rounded"
             >
-                Додати
+                <option value="high">Высокий приоритет</option>
+                <option value="medium">Средний приоритет</option>
+                <option value="low">Низкий приоритет</option>
+            </select>
+            <input
+                type="text"
+                placeholder="Теги через запятую (например: работа, учеба)"
+                value={tagsInput}
+                onChange={e => setTagsInput(e.target.value)}
+                className="w-full border p-2 rounded"
+            />
+            <button type="submit" className="bg-blue-600 text-white px-4 py-2 rounded">
+                Добавить задачу
             </button>
         </form>
     );

@@ -1,4 +1,10 @@
 export default function TaskItem({ task, onToggle, onDelete, disabled, innerRef, dragProps }) {
+    const priorityColors = {
+        high: "text-red-600",
+        medium: "text-yellow-600",
+        low: "text-green-600",
+    }
+
     return (
         <div
             ref={innerRef}
@@ -12,6 +18,9 @@ export default function TaskItem({ task, onToggle, onDelete, disabled, innerRef,
                 onClick={() => !disabled && onToggle()}
             >
                 <div className="font-medium">{task.title}</div>
+                <div className={`font-semibold ${priorityColors[task.priority]}`}>
+                    {task.priority === "high" ? "🔥" : task.priority === "medium" ? "⚡" : "✅" }
+                </div>
                 <div className="font-sm text-gray-500">До: {task.dueDate}</div>
             </div>
             <button

@@ -56,7 +56,7 @@ function App() {
 
     }
 
-    const addTask = ({ title, dueDate }) => {
+    const addTask = ({ title, dueDate, priority = "medium", tags = [] }) => {
         const finalDueDate = dueDate || suggestDate();
 
         const countForDate = tasks.filter((t) => t.dueDate === finalDueDate).length;
@@ -71,6 +71,8 @@ function App() {
             title,
             completed: false,
             dueDate: finalDueDate,
+            priority,
+            tags,
         };
         setTasks((prev) => {
             const updated = [newTask, ...prev];
