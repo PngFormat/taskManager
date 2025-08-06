@@ -2,17 +2,7 @@ import { useState, useEffect } from "react";
 import TaskForm from "../components/TaskForm";
 import TaskList from "../components/TaskList";
 
-export default function Home({ tasks, addTask, toggleTask, deleteTask, bestDay }) {
-    const [localTasks, setLocalTasks] = useState([]);
-    const reorderTasks = (newOrder) => {
-        setLocalTasks(newOrder);
-    };
-
-    useEffect(() => {
-        setLocalTasks(tasks);
-    }, [tasks]);
-
-
+export default function Home({ tasks, addTask, toggleTask, deleteTask, bestDay, reorderTasks }) {
 
     return (
         <div className="max-w-3xl mx-auto py-10 px-4">
@@ -22,7 +12,7 @@ export default function Home({ tasks, addTask, toggleTask, deleteTask, bestDay }
             <h1 className="text-3xl font-bold mb-6 text-center">🧠 Мій планувальник</h1>
             <TaskForm onAdd={addTask} />
             <TaskList
-                tasks={localTasks}
+                tasks={tasks}
                 onToggle={toggleTask}
                 onDelete={deleteTask}
                 onReorder={reorderTasks}

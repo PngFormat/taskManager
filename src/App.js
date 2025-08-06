@@ -19,7 +19,9 @@ function App() {
         return saved ? Number(saved) : 3;
     })
 
-
+    const reorderTasks = (newOrder) => {
+        setTasks(newOrder);
+    };
 
     const suggestDate = () => {
         const taskCountByDate = {};
@@ -107,7 +109,9 @@ function App() {
                                 toggleTask={toggleTask}
                                 deleteTask={deleteTask}
                                 bestDay={bestDay}
+                                reorderTasks={reorderTasks}
                             />
+
                         }
                     />
                     <Route path="calendar" element={<Calendar tasks={tasks} />} />
