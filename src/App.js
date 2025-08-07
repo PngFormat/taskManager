@@ -7,11 +7,12 @@ import Tasks from "./pages/Tasks";
 import Settings from "./pages/Settings";
 import dayjs from "dayjs";
 import FocusMode from "./pages/FocusMode.tsx";
+import ProductivityPage from "./pages/ProductivityPage.tsx";
 
 function App() {
     const [tasks, setTasks] = useState([
-        { id: "1", title: "Закончить макет", completed: false, dueDate: "2025-08-29" },
-        { id: "2", title: "Купить продукты", completed: true, dueDate: "2025-08-24" },
+        { id: "1", title: "Закончить макет", completed: false, dueDate: "2025-08-29", priority: "low" },
+        { id: "2", title: "Купить продукты", completed: true, dueDate: "2025-08-24", priority: "low"  },
     ]);
 
     const [maxTasksPerDay, setMaxTasksPerDay] = useState(() => {
@@ -87,10 +88,21 @@ function App() {
     };
 
     const toggleTask = (id) => {
-        setTasks((prev) =>
-            prev.map((t) => (t.id === id ? { ...t, completed: !t.completed } : t))
+        setTasks(prevTasks =>
+            prevTasks.map(task => {
+                if (task.id === id) {
+                    const isNowCompleted = !task.completed;
+                    return {
+                        ...task,
+                        completed: isNowCompleted,
+                        completedAt: isNowCompleted ? new Date().toISOString() : null
+                    };
+                }
+                return task;
+            })
         );
     };
+
 
     const deleteTask = (id) => {
         setTasks((prev) => prev.filter((t) => t.id !== id));
@@ -141,6 +153,12 @@ function App() {
                                 toggleTask={toggleTask}
                                 deleteTask={deleteTask}
                             />
+                        }
+                    />
+                    <Route
+                        path="productivity"
+                        element={
+                            <ProductivityPage tasks={tasks} />
                         }
                     />
 
