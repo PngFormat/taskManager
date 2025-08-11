@@ -2,13 +2,27 @@ import {useEffect, useState} from "react";
 import {Link} from "react-router-dom";
 import useTaskAssistant from "../hooks/useTaskAssistant.tsx";
 
-const Tasks = ({ tasks }) => {
+const Tasks = () => {
+    const [tasks, setTasks] = useState([]);
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        fetch("http://localhost:5000/api/tasks")
+            .then(res => res.json())
+            .then(data => {
+                setTasks(data);
+                setLoading(false);
+            });
+    }, []);
+
     const total = tasks.length;
     const completed = tasks.filter(t => t.completed).length;
     const upcoming = tasks.slice(0, 3);
-    const {recommendations, progress} = useTaskAssistant(tasks);
+    const { recommendations, progress } = useTaskAssistant(tasks);
+    const [showProgress, setShowProgress] = useState(false);
 
-    const [showProgress , setShowProgress] = useState(false);
+    if (loading) return <p>Загрузка...</p>;
+
 
     return (
         <div className="max-w-4xl mx-auto py-8 px-4">
