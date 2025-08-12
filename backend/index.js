@@ -2,6 +2,8 @@ const express = require("express");
 const mongoose = require("mongoose");
 const cors = require("cors");
 const dotenv = require("dotenv");
+const Task = require("./models/tasks");
+const generateRepeatingTasks = require("./repeatTasks");
 
 dotenv.config();
 
@@ -13,16 +15,6 @@ mongoose.connect(process.env.MONGO_URI)
     .then(() => console.log("✅ MongoDB подключена"))
     .catch(err => console.error("❌ Ошибка подключения:", err));
 
-const taskSchema = new mongoose.Schema({
-    title: String,
-    completed: Boolean,
-    dueDate: String,
-    priority: String,
-    tags: [String],
-    completedAt: String
-});
-
-const Task = mongoose.model("Task", taskSchema);
 
 app.get("/api/tasks", async (req,res) => {
     const tasks = await Task.find();
@@ -44,6 +36,8 @@ app.delete("/api/tasks/:id", async (req, res) => {
     await Task.findByIdAndDelete(req.params.id);
     res.json({ message: "Видалено"})
 })
+
+setInterval(generateRepeatingTasks, 24 * 60 * 60 * 1000)
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT,

@@ -104,8 +104,14 @@ function App() {
 
 
     const deleteTask = async (id) => {
-        await fetch(`http://localhost:5000/api/tasks/${id}`, { method: "DELETE" });
-        setTasks(prev => prev.filter(t => t.id !== id && t._id !== id));
+        try {
+            await fetch(`http://localhost:5000/api/tasks/${id}`, {
+                method: "DELETE",
+            });
+            setTasks(tasks.filter(task => task._id !== id));
+        } catch (error) {
+            console.error("Ошибка при удалении задачи:", error);
+        }
     };
 
     const bestDay = getBestDay();

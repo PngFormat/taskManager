@@ -5,18 +5,26 @@ export default function TaskForm({ onAdd }) {
     const [dueDate, setDueDate] = useState("");
     const [priority, setPriority] = useState("medium");
     const [tagsInput, setTagsInput] = useState("");
+    const [repeat, setRepeat] = useState("none");
 
     const handleSubmit = (e) => {
         e.preventDefault();
 
         const tags = tagsInput.split(",").map(t => t.trim()).filter(t => t);
 
-        onAdd({ title, dueDate, priority, tags });
+        onAdd({
+            title,
+            dueDate,
+            priority,
+            tags,
+            repeat
+        });
 
         setTitle("");
         setDueDate("");
         setPriority("medium");
         setTagsInput("");
+        setRepeat("none")
     };
 
     return (
@@ -51,6 +59,17 @@ export default function TaskForm({ onAdd }) {
                 onChange={e => setTagsInput(e.target.value)}
                 className="w-full border p-2 rounded"
             />
+
+            <select
+                value={repeat}
+                onChange={e => setRepeat(e.target.value)}
+                className="w-full border p-2 rounded"
+            >
+                <option value="none">Без повторення</option>
+                <option value="daily">Кожен день</option>
+                <option value="weekly">Кожного тижня</option>
+                <option value="monthly">Кожного місяця</option>
+            </select>
             <button type="submit" className="bg-blue-600 text-white px-4 py-2 rounded">
                 Добавить задачу
             </button>

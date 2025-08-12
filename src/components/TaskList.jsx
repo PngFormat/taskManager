@@ -27,7 +27,7 @@ export default function TaskList({ tasks, onToggle, onDelete, onReorder, disable
 
                         {tasks.map((task, index) => (
 
-                            <Draggable key={task.id} draggableId={String(task.id)} index={index}>
+                            <Draggable key={task._id} draggableId={String(task._id)} index={index}>
 
                                 {(provided, snapshot) => (
 
@@ -42,8 +42,8 @@ export default function TaskList({ tasks, onToggle, onDelete, onReorder, disable
                                     >
                                         <TaskItem
                                             task={task}
-                                            onToggle={() => onToggle(task.id)}
-                                            onDelete={() => onDelete(task.id)}
+                                            onToggle={() => onToggle(task._id)}
+                                            onDelete={() => onDelete(task._id)}
                                             disabled={disabled}
                                         />
                                     </div>
