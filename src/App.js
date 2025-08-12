@@ -1,4 +1,4 @@
-import { useState } from "react";
+import {useEffect, useState} from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Layout from "./layouts/Layout";
 import Home from "./pages/Home";
@@ -10,14 +10,17 @@ import FocusMode from "./pages/FocusMode.tsx";
 import ProductivityPage from "./pages/ProductivityPage.tsx";
 
 function App() {
-    const [tasks, setTasks] = useState([
-        { id: "1", title: "Закончить макет", completed: false, dueDate: "2025-08-29", priority: "low" },
-        { id: "2", title: "Купить продукты", completed: true, dueDate: "2025-08-24", priority: "low"  },
-    ]);
+    const [tasks, setTasks] = useState([]);
 
     const [maxTasksPerDay, setMaxTasksPerDay] = useState(() => {
         const saved = localStorage.getItem("maxTasksPerDay");
         return saved ? Number(saved) : 3;
+    })
+
+    useEffect(() => {
+        fetch("http://localhost:5000/api/tasks")
+            .then(res => res.json())
+            .then(data => setTasks(data))
     })
 
     const reorderTasks = (newOrder) => {
@@ -57,7 +60,7 @@ function App() {
 
     }
 
-    const addTask = ({ title, dueDate, priority = "medium", tags = [] }) => {
+    const addTask = async ({ title, dueDate, priority = "medium", tags = [] }) => {
         const finalDueDate = dueDate || suggestDate();
 
         const countForDate = tasks.filter((t) => t.dueDate === finalDueDate).length;
@@ -75,37 +78,40 @@ function App() {
             priority,
             tags,
         };
-        setTasks((prev) => {
-            const updated = [newTask, ...prev];
 
-            const count = updated.filter((t) => t.dueDate === finalDueDate).length;
-            if (count > 3) {
-                alert(`⚠️ На ${finalDueDate} уже ${count} задач(и). Подумай, стоит ли добавлять ещё.`);
-            }
-            return updated;
-        });
+        const res = await fetch("http://localhost:5000/api/tasks", {
+            method: "POST",
+            headers: {"Content-Type" : "application/json"},
+            body: JSON.stringify(newTask)
+        })
 
+        const savedTask = await res.json();
+        setTasks(prev => [savedTask, ...prev]);
     };
 
-    const toggleTask = (id) => {
-        setTasks(prevTasks =>
-            prevTasks.map(task => {
-                if (task.id === id) {
-                    const isNowCompleted = !task.completed;
-                    return {
-                        ...task,
-                        completed: isNowCompleted,
-                        completedAt: isNowCompleted ? new Date().toISOString() : null
-                    };
-                }
-                return task;
-            })
-        );
+    const toggleTask =  async (id) => {
+        const task = tasks.find(t => t.id === id || t._id === id);
+        const updated = { ...task, completed: !task.completed };
+
+        await fetch(`http://localhost:5000/api/tasks/${id}`, {
+            method: "PUT",
+            headers: {"Content-Type" : "application/json"},
+            body: JSON.stringify(updated)
+        })
+
+        setTasks(prev => prev.map(t => (t.id === id || t._id === id) ? updated : t));
     };
 
 
-    const deleteTask = (id) => {
-        setTasks((prev) => prev.filter((t) => t.id !== id));
+    const deleteTask = async (id) => {
+        try {
+            await fetch(`http://localhost:5000/api/tasks/${id}`, {
+                method: "DELETE",
+            });
+            setTasks(tasks.filter(task => task._id !== id));
+        } catch (error) {
+            console.error("Ошибка при удалении задачи:", error);
+        }
     };
 
     const bestDay = getBestDay();

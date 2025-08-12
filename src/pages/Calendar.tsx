@@ -7,6 +7,7 @@ interface Task {
     title: string;
     completed: boolean;
     dueDate: string;
+    repeat?: "none" | "daily" | "weekly" | "monthly";
 }
 
 interface CalendarProps {
@@ -28,7 +29,28 @@ const Calendar: FC<CalendarProps> = ({ tasks }) => {
 
     const calendarDays: (number | null) [] = [];
 
+    const isTaskOnDate = (task: Task & {repeat?: String}, date: dayjs.Dayjs) => {
+        const taskDate = dayjs(task.dueDate);
 
+        if (!task.repeat || task.repeat === "none") {
+           return taskDate.isSame(date, "day");
+        }
+
+        if (task.repeat === "daily") {
+            return taskDate.isSameOrAfter(taskDate, "day");
+        }
+
+        if (task.repeat === "weekly") {
+            return taskDate.isSameOrAfter(taskDate, "day") && date.day() === taskDate.day();
+        }
+
+        if (task.repeat === "monthly") {
+            return taskDate.isSameOrAfter(taskDate, "day") && date.day() === taskDate.day();
+        }
+
+        return false;
+
+    }
 
     for (let i = 0; i < startDay; i++ ) {
         calendarDays.push(null);
@@ -72,13 +94,19 @@ const Calendar: FC<CalendarProps> = ({ tasks }) => {
 
             <div className="grid grid-cols-7 gap-2 mt-2">
                 {calendarDays.map((day,index) => {
-                    const dateStr = day
-                        ? currentDate.date(day).format("YYYY-MM-DD")
-                        : null;
+                    if (!day) {
+                        return (
+                            <div
+                                key={index}
+                                className="min-h-[100px] p-1 rounded-lg border bg-transparent border-none"
+                            >
+                            </div>
+                        );
+                    }
 
-                    const tasksForday = dateStr
-                        ? tasks.filter((task) => task.dueDate === dateStr)
-                        : [];
+                    const dateObj = currentDate.date(day);
+
+                    const tasksForday = tasks.filter((task) => isTaskOnDate(task, dateObj));
 
                     return (
                         <div
