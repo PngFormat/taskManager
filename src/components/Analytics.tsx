@@ -1,4 +1,5 @@
 import { BarChart, Bar, PieChart, Pie, Cell, XAxis, YAxis, Tooltip, Legend, ResponsiveContainer } from "recharts";
+import TaskHistory from "./TaskHistory.tsx";
 
 const COLORS = ["#8884d8", "#82ca9d", "#ffc658", "#ff7f50", "#ff6f91", "#00c49f", "#ffbb28"];
 
@@ -64,6 +65,9 @@ export default function ProductivityAnalytics({ tasks }) {
                             <Tooltip />
                         </PieChart>
                     </ResponsiveContainer>
+                </div>
+                <div className="mt-8">
+                    <TaskHistory tasks={tasks} />
                 </div>
             </div>
         </div>

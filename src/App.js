@@ -8,6 +8,7 @@ import Settings from "./pages/Settings";
 import dayjs from "dayjs";
 import FocusMode from "./pages/FocusMode.tsx";
 import ProductivityPage from "./pages/ProductivityPage.tsx";
+import TaskHistory from "./components/TaskHistory.tsx";
 
 function App() {
     const [tasks, setTasks] = useState([]);
@@ -165,6 +166,13 @@ function App() {
                         path="productivity"
                         element={
                             <ProductivityPage tasks={tasks} />
+                        }
+                    />
+
+                    <Route
+                        path="archive"
+                        element={
+                            <TaskHistory tasks={tasks} />
                         }
                     />
 
