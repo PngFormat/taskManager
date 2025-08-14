@@ -9,6 +9,7 @@ import dayjs from "dayjs";
 import FocusMode from "./pages/FocusMode.tsx";
 import ProductivityPage from "./pages/ProductivityPage.tsx";
 import TaskHistory from "./components/TaskHistory.tsx";
+import {autoMoveUnfinishedTasks} from "./utils/taskUtils";
 
 function App() {
     const [tasks, setTasks] = useState([]);
@@ -21,7 +22,11 @@ function App() {
     useEffect(() => {
         fetch("http://localhost:5000/api/tasks")
             .then(res => res.json())
-            .then(data => setTasks(data))
+            .then(data =>
+            {
+                const updated = autoMoveUnfinishedTasks(data);
+                setTasks(updated)
+            })
     })
 
     const reorderTasks = (newOrder) => {
