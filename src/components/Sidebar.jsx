@@ -14,6 +14,7 @@ const Sidebar = () => {
                 <NavLink to="/settings" className={linkClass}>⚙️ Налаштування</NavLink>
                 <NavLink to="/focus-mode" className={linkClass}>👩‍💻  Фокус мод</NavLink>
                 <NavLink to="/productivity" className={linkClass}>⚡️Продуктивність</NavLink>
+                <NavLink to="/archive" className={linkClass}>🗂️️Архів</NavLink>
             </nav>
         </div>
     );

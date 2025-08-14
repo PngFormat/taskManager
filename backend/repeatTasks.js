@@ -33,3 +33,5 @@ async function generateRepeatingTasks() {
         }
     }
 }
+
+module.exports = { generateRepeatingTasks };
