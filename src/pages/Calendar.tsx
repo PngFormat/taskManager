@@ -1,6 +1,7 @@
 import React, {FC, useState } from "react";
-
+import AddTaskModal from "../components/AddTaskModal.tsx";
 import dayjs from "dayjs";
+
 
 interface Task {
     id: number;
@@ -12,12 +13,15 @@ interface Task {
 
 interface CalendarProps {
     tasks: Task[];
+    onAddTask: (task: {title: string; dueDate: string}) => void;
 }
 
 const daysOfWeek = ["Пн", "Вт", "Ср", "Чт", "Пт", "Сб", "Нд"];
 
-const Calendar: FC<CalendarProps> = ({ tasks }) => {
+const Calendar: FC<CalendarProps> = ({ tasks,onAddTask }) => {
     const [currentDate, setCurrentDate] = useState(dayjs());
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [selectedDate, setSelectedDate] = useState<string | null>(null);
 
     const startOfMonth = currentDate.startOf("month");
     const endOfMonth = currentDate.endOf("month");
@@ -58,6 +62,12 @@ const Calendar: FC<CalendarProps> = ({ tasks }) => {
 
     for (let i = 1; i <= daysInMonth; i++ ) {
         calendarDays.push(i);
+    }
+
+    const openAddModal = (day: number) => {
+        const dateStr = currentDate.date(day).format("YYYY-MM-DD")
+        setSelectedDate(dateStr);
+        setIsModalOpen(true);
     }
 
 
@@ -111,6 +121,7 @@ const Calendar: FC<CalendarProps> = ({ tasks }) => {
                     return (
                         <div
                             key={index}
+                            onClick={() => openAddModal(day)}
                             className={`min-h-[100px] p-1 rounded-lg border ${
                             day
                                 ?  "bg-white hover:bg-blue-50 cursor-pointer"
@@ -140,6 +151,12 @@ const Calendar: FC<CalendarProps> = ({ tasks }) => {
                     );
                 })}
             </div>
+            <AddTaskModal
+                isOpen={isModalOpen}
+                onClose={() => setIsModalOpen(false)}
+                onAdd={onAddTask}
+                selectedDate={selectedDate || ""}
+            />
         </div>
     )
 };
