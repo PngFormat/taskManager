@@ -1,4 +1,5 @@
 import { useState } from "react";
+import {TASK_TEMPLATES} from "../utils/templates";
 
 export default function TaskForm({ onAdd }) {
     const [title, setTitle] = useState("");
@@ -6,6 +7,21 @@ export default function TaskForm({ onAdd }) {
     const [priority, setPriority] = useState("medium");
     const [tagsInput, setTagsInput] = useState("");
     const [repeat, setRepeat] = useState("none");
+    const [selectedTemplate, setSelectedTemplate] = useState("")
+
+    const handleTemplateChange = (e) => {
+        const templateName = e.target.value;
+        setSelectedTemplate(templateName);
+
+        const template = TASK_TEMPLATES.find(t => t.name === templateName);
+        if (template) {
+            setTitle(template.title);
+            setPriority(template.priority);
+            setTagsInput(template.tags.join(", "));
+            setRepeat(template.repeat);
+            setDueDate("");
+        }
+    };
 
     const handleSubmit = (e) => {
         e.preventDefault();
@@ -25,10 +41,23 @@ export default function TaskForm({ onAdd }) {
         setPriority("medium");
         setTagsInput("");
         setRepeat("none")
+        setSelectedTemplate("");
     };
 
     return (
         <form onSubmit={handleSubmit} className="space-y-2 mb-4">
+            <select
+                value={selectedTemplate}
+                onChange={handleTemplateChange}
+                className="w-full border p-2 rounded"
+            >
+                <option value="">Выбрати шаблок (необов'язково)</option>
+                {TASK_TEMPLATES.map(t => (
+                    <option key={t.name} value={t.name}>
+                        {t.name}
+                    </option>
+                ))}
+            </select>
             <input
                 type="text"
                 placeholder="Новая задача"

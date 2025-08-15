@@ -27,7 +27,7 @@ function App() {
                 const updated = autoMoveUnfinishedTasks(data);
                 setTasks(updated)
             })
-    })
+    },[])
 
     const reorderTasks = (newOrder) => {
         setTasks(newOrder);
