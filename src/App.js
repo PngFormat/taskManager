@@ -140,7 +140,7 @@ function App() {
 
                         }
                     />
-                    <Route path="calendar" element={<Calendar tasks={tasks} />} />
+                    <Route path="calendar" element={<Calendar tasks={tasks} onAddTask={addTask} />} />
                     <Route
                         path="tasks"
                         element={
