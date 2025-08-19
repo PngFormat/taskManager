@@ -1,5 +1,6 @@
 import { useState } from "react";
 import {TASK_TEMPLATES} from "../utils/templates";
+import {parseQuickTask} from "../utils/quickParse.ts";
 
 export default function TaskForm({ onAdd }) {
     const [title, setTitle] = useState("");
@@ -22,6 +23,16 @@ export default function TaskForm({ onAdd }) {
             setDueDate("");
         }
     };
+
+    const handleTitleChange = (e) => {
+        const inputText = e.target.value;
+        setTitle(inputText);
+
+        const parsed = parseQuickTask(inputText);
+        if (parsed.dueDateTime) setDueDate(parsed.dueDateTime.substring(0,16));
+        if (parsed.title !== inputText) setTitle(parsed.title);
+    };
+
 
     const handleSubmit = (e) => {
         e.preventDefault();
