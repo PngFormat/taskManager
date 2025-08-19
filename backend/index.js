@@ -3,7 +3,9 @@ const mongoose = require("mongoose");
 const cors = require("cors");
 const dotenv = require("dotenv");
 const Task = require("./models/tasks");
-const { generateRepeatingTasks } = require("./repeatTasks");
+const { generateRepeatingTasks } = require("./repeatTasks.js");
+const { autoMoveUnfinishedTasks } = require("./utils/autoMoveUnfinishedTasks.js")
+
 
 dotenv.config();
 
@@ -36,8 +38,14 @@ app.delete("/api/tasks/:id", async (req, res) => {
     await Task.findByIdAndDelete(req.params.id);
     res.json({ message: "Видалено"})
 })
+
 generateRepeatingTasks();
-setInterval( ()=> generateRepeatingTasks ,24 * 60 * 60 * 1000)
+autoMoveUnfinishedTasks();
+
+setInterval(() => {
+    generateRepeatingTasks();
+    autoMoveUnfinishedTasks();
+}, 24 * 60 * 60 * 1000);
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT,
