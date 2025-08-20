@@ -9,7 +9,9 @@ export default function TaskList({
                                      onReorder,
                                      disabled,
                                      focusedTaskId,
-                                     onFocusSelect
+                                     onFocusSelect,
+                                     onUpdateDeadline
+
                                  }) {
     const handleDragEnd = (result) => {
         if (!result.destination) return;
@@ -64,6 +66,7 @@ export default function TaskList({
                                                     task={task}
                                                     onToggle={() => onToggle(task._id)}
                                                     onDelete={() => onDelete(task._id)}
+                                                    onUpdateDeadline={onUpdateDeadline}
                                                     disabled={disabled && task._id !== focusedTaskId}
                                                     onFocusSelect={() => onFocusSelect(task._id)}
                                                     isFocused={task._id === focusedTaskId}
