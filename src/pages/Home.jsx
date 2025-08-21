@@ -2,14 +2,15 @@ import {useState, useEffect, useMemo} from "react";
 import TaskForm from "../components/TaskForm";
 import TaskList from "../components/TaskList";
 
-export default function Home({ tasks, addTask, toggleTask, deleteTask, bestDay, reorderTasks }) {
+export default function Home({ tasks, addTask, toggleTask, deleteTask, bestDay, reorderTasks, onUpdateDeadline  }) {
     const [filterPriority, setFilterPriority] = useState("");
     const [filterTag, setFilterTag] = useState("");
+    const [taskList, setTaskList] = useState(tasks);
 
     const priorityOrder = {high: 1, medium: 2, low: 3}
 
     const filteredTasks = useMemo(() => {
-        return tasks
+        return taskList
             .filter(task => (filterPriority ? task.priority === filterPriority : true))
             .filter(task => (filterTag ? task.tags?.includes(filterTag) : true))
             .sort((a, b) => {
@@ -18,11 +19,19 @@ export default function Home({ tasks, addTask, toggleTask, deleteTask, bestDay, 
                 }
                 return new Date(a.dueDate) - new Date(b.dueDate);
             });
-    }, [tasks, filterPriority, filterTag]);
+    }, [taskList, filterPriority, filterTag]);
+
 
     const allTags = Array.from(
         new Set(tasks.flatMap(tasks => tasks.tags || []))
     );
+
+    const handleUpdateDeadline = ( taskId, newDueDate) => {
+        const updatedTasks = taskList.map(t =>
+            t._id === taskId ? {...t, dueDate: newDueDate} : t
+        );
+        setTaskList(updatedTasks);
+    }
 
     return (
         <div className="max-w-3xl mx-auto py-10 px-4">
@@ -61,6 +70,7 @@ export default function Home({ tasks, addTask, toggleTask, deleteTask, bestDay, 
                 onToggle={toggleTask}
                 onDelete={deleteTask}
                 onReorder={reorderTasks}
+                onUpdateDeadline={handleUpdateDeadline}
             />
         </div>
 

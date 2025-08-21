@@ -1,9 +1,33 @@
-export default function TaskItem({ task, onToggle, onDelete, disabled, innerRef, dragProps,  onFocusSelect, isFocused }) {
+import {useState} from "react";
+
+export default function TaskItem({
+                                     task,
+                                     onToggle,
+                                     onDelete,
+                                     onUpdateDeadline,
+                                     disabled,
+                                     innerRef,
+                                     dragProps,
+                                     onFocusSelect,
+                                     isFocused }) {
+
+    const [editingDeadline , setEditingDeadline] = useState(false);
+    const [newDeadline, setNewDeadline] = useState(task.dueDate || "")
+
     const priorityColors = {
         high: "text-red-600",
         medium: "text-yellow-600",
         low: "text-green-600",
     }
+
+    const handleSaveDeadline = () => {
+        if (newDeadline) {
+            const isoDate = new Date(newDeadline).toISOString();
+            onUpdateDeadline(task._id, isoDate);
+        }
+        setEditingDeadline(false);
+    };
+
 
     return (
         <div
@@ -21,7 +45,60 @@ export default function TaskItem({ task, onToggle, onDelete, disabled, innerRef,
                 <div className={`font-semibold ${priorityColors[task.priority]}`}>
                     {task.priority === "high" ? "🔥" : task.priority === "medium" ? "⚡" : "✅" }
                 </div>
-                <div className="font-sm text-gray-500">До: {task.dueDate}</div>
+
+                <div className="flex items-center space-x-2">
+                    {editingDeadline ? (
+                        <div className="flex items-center space-x-1">
+                            <input
+                                type="date"
+                                value={newDeadline ? newDeadline.split("T")[0] : ""}
+                                onChange={(e) => setNewDeadline(e.target.value)}
+                                onClick={(e) => e.stopPropagation()}
+                                className="border rounded p-1"
+                            />
+                            <button
+                                onClick={(e) => {
+                                    e.stopPropagation();
+                                    handleSaveDeadline();
+                                }}
+                                className="text-green-600 font-bold"
+                            >
+                                ✔
+                            </button>
+                            <button
+                                onClick={(e) =>  {
+                                    e.stopPropagation();
+                                    setEditingDeadline(false)
+                                }}
+                                className="text-red-500 font-bold"
+                            >
+                                ✖
+                            </button>
+                        </div>
+                    ) : (
+                        <>
+                        <span className="text-sm text-gray-500">
+                            📅 {task.dueDate ? new Date(task.dueDate).toLocaleDateString() : "нет срока"}
+                        </span>
+                            <button
+                                onClick={(e) => {
+                                    e.stopPropagation();
+                                    setEditingDeadline(true)
+                                }}
+                                className="text-blue-500 hover:underline"
+                            >
+                                Изм.
+                            </button>
+                        </>
+                    )}
+
+                    <button
+                        onClick={onDelete}
+                        className="text-red-500 hover:underline"
+                    >
+                        ❌
+                    </button>
+                </div>
             </div>
             {!isFocused && !disabled && (
                 <button
