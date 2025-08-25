@@ -8,7 +8,8 @@ export default function TaskForm({ onAdd }) {
     const [priority, setPriority] = useState("medium");
     const [tagsInput, setTagsInput] = useState("");
     const [repeat, setRepeat] = useState("none");
-    const [selectedTemplate, setSelectedTemplate] = useState("")
+    const [selectedTemplate, setSelectedTemplate] = useState("");
+    const [submitted, setSubmitted] = useState(false);
 
     const handleTemplateChange = (e) => {
         const templateName = e.target.value;
@@ -24,20 +25,16 @@ export default function TaskForm({ onAdd }) {
         }
     };
 
-    const handleTitleChange = (e) => {
-        const inputText = e.target.value;
-        setTitle(inputText);
-
-        const parsed = parseQuickTask(inputText);
-        if (parsed.dueDateTime) setDueDate(parsed.dueDateTime.substring(0,16));
-        if (parsed.title !== inputText) setTitle(parsed.title);
-    };
-
-
     const handleSubmit = (e) => {
         e.preventDefault();
+        setSubmitted(true);
 
-        const tags = tagsInput.split(",").map(t => t.trim()).filter(t => t);
+        if (!title.trim() || !dueDate.trim()) return;
+
+        const tags = tagsInput
+            .split(",")
+            .map(t => t.trim())
+            .filter(t => t);
 
         onAdd({
             title,
@@ -51,9 +48,12 @@ export default function TaskForm({ onAdd }) {
         setDueDate("");
         setPriority("medium");
         setTagsInput("");
-        setRepeat("none")
+        setRepeat("none");
         setSelectedTemplate("");
+        setSubmitted(false);
     };
+
+
 
     return (
         <form onSubmit={handleSubmit} className="space-y-2 mb-4">
@@ -62,7 +62,7 @@ export default function TaskForm({ onAdd }) {
                 onChange={handleTemplateChange}
                 className="w-full border p-2 rounded"
             >
-                <option value="">Выбрати шаблок (необов'язково)</option>
+                <option value="">Выбрати шаблон (необов'язково)</option>
                 {TASK_TEMPLATES.map(t => (
                     <option key={t.name} value={t.name}>
                         {t.name}
@@ -74,14 +74,16 @@ export default function TaskForm({ onAdd }) {
                 placeholder="Новая задача"
                 value={title}
                 onChange={e => setTitle(e.target.value)}
-                required
-                className="w-full border p-2 rounded"
+                className={`w-full border p-2 rounded  ${ 
+                    submitted && !title.trim() ? "border-red-500 bg-red-100" : ""}`}
             />
             <input
                 type="date"
                 value={dueDate}
                 onChange={e => setDueDate(e.target.value)}
-                className="w-full border p-2 rounded"
+                className={`w-full border p-2 rounded ${
+                    submitted && !dueDate.trim() ? "border-red-500 bg-red-100" : ""
+                }`}
             />
             <select
                 value={priority}
@@ -110,7 +112,10 @@ export default function TaskForm({ onAdd }) {
                 <option value="weekly">Кожного тижня</option>
                 <option value="monthly">Кожного місяця</option>
             </select>
-            <button type="submit" className="bg-blue-600 text-white px-4 py-2 rounded">
+            <button
+                type="submit"
+                className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition"
+            >
                 Добавить задачу
             </button>
         </form>
