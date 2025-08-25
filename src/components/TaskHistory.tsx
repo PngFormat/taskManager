@@ -17,8 +17,21 @@ export default function TaskHistory({ tasks}) {
                     <tbody>
                         { completedTasks.map( task => {
                             const start = new Date(task.startedAt || task.createdAt);
-                            const end = new Date(task.completedAt);
-                            const durationMs = end - start;
+                            const end = task.completedAt ? new Date(task.completedAt) : null;
+
+
+                            if (!end || isNaN(end.getTime())) {
+                                return (
+                                    <tr key={task._id || task.id}>
+                                        <td className="px-4 py-2 border">{task.title}</td>
+                                        <td className="px-4 py-2 border">{task.priority}</td>
+                                        <td className="px-4 py-2 border">Не завершено</td>
+                                        <td className="px-4 py-2 border">-</td>
+                                    </tr>
+                                )
+                            }
+
+                            const durationMs = end.getTime() - start.getTime();
                             const hours = Math.floor( durationMs / (1000 * 60 * 60));
                             const minutes = Math.floor((durationMs / (1000 * 60)) % 60);
 

@@ -30,8 +30,26 @@ app.post("/api/tasks", async (req,res) => {
 });
 
 app.put("/api/tasks/:id", async (req, res) => {
-    const updatedTask = await Task.findByIdAndUpdate(req.params.id, req.body, { new: true });
-    res.json(updatedTask);
+    const updateData = {...reg.body};
+
+    if (updateData.completed === true) {
+        updateData.completedAt = new Date();
+    } else if (updateData.completed === false) {
+        updateData.completedAt = null;
+    }
+
+    try {
+        const updatedTask = await Task.findByIdAndUpdate(
+            reg.params.id,
+            updateData,
+            {new: true}
+        );
+
+        res.json(updatedTask)
+    } catch (err) {
+        console.error("Помилка оновлення задачі:", err );
+        res.status(500).json({error: "Не вдалося оновити задачу"})
+    }
 });
 
 app.delete("/api/tasks/:id", async (req, res) => {

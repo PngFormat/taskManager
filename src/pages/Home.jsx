@@ -39,6 +39,8 @@ export default function Home({
         new Set(tasks.flatMap((tasks) => tasks.tags || []))
     );
 
+
+
     const handleUpdateDeadline = async (taskId, newDueDate) => {
         try {
             const response = await fetch(
@@ -64,6 +66,8 @@ export default function Home({
             alert("Не удалось обновить дедлайн на сервере");
         }
     };
+
+
 
     return (
         <div className="max-w-3xl mx-auto py-10 px-4">
