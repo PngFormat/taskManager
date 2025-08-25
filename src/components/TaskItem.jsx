@@ -14,6 +14,7 @@ export default function TaskItem({
     const [editingDeadline , setEditingDeadline] = useState(false);
     const [newDeadline, setNewDeadline] = useState(task.dueDate || "")
 
+
     const priorityColors = {
         high: "text-red-600",
         medium: "text-yellow-600",
@@ -39,9 +40,11 @@ export default function TaskItem({
         >
             <div
                 className={`flex-1 ${disabled ? "pointer-events-none" : "cursor-pointer"}`}
-                onClick={() => !(disabled && !isFocused) && onToggle()}
+                onClick={() => !(disabled && !isFocused) && onToggle(task._id)}
+
             >
-                <div className="font-medium">{task.title}</div>
+
+            <div className="font-medium">{task.title}</div>
                 <div className={`font-semibold ${priorityColors[task.priority]}`}>
                     {task.priority === "high" ? "🔥" : task.priority === "medium" ? "⚡" : "✅" }
                 </div>

@@ -96,17 +96,19 @@ function App() {
     };
 
     const toggleTask =  async (id) => {
-        const task = tasks.find(t => t.id === id || t._id === id);
-        const updated = { ...task, completed: !task.completed };
+        const task = tasks.find(t => t._id === id || t.id === id);
+        if (!task) return;
+        const updatedTask = { ...task, completed: !task.completed };
 
         await fetch(`http://localhost:5000/api/tasks/${id}`, {
             method: "PUT",
-            headers: {"Content-Type" : "application/json"},
-            body: JSON.stringify(updated)
-        })
+            headers: {"Content-Type": "application/json"},
+            body: JSON.stringify({ completed: updatedTask.completed }),
+        });
 
-        setTasks(prev => prev.map(t => (t.id === id || t._id === id) ? updated : t));
+        setTasks(prev => prev.map(t => (t._id === id || t.id === id) ? updatedTask : t));
     };
+
 
 
     const deleteTask = async (id) => {

@@ -7,6 +7,7 @@ export default function Settings({ maxTasksPerDay, setMaxTasksPerDay }) {
     const [notifications, setNotifications] = useState(true);
     const [language, setLanguage] = useState("ua");
     const [localMaxTasks, setLocalMaxTasks] = useState(maxTasksPerDay);
+    const [city, setCity] = useState("Київ");
 
     const handleReset = () => {
         // eslint-disable-next-line no-restricted-globals
@@ -19,6 +20,7 @@ export default function Settings({ maxTasksPerDay, setMaxTasksPerDay }) {
     const handleSave = () => {
         setMaxTasksPerDay(localMaxTasks);
         localStorage.setItem("maxTasksPerDay", localMaxTasks.toString());
+        localStorage.setItem("city,", city);
         alert("Налаштування збережено!");
     };
 
@@ -51,6 +53,16 @@ export default function Settings({ maxTasksPerDay, setMaxTasksPerDay }) {
                     type="email"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
+                    className="w-full border rounded px-3 py-2"
+                />
+            </div>
+
+            <div>
+                <label className="block font-semibold mb-1 ">📍 Місто</label>
+                <input
+                    type="text"
+                    value={city}
+                    onChange={(e) => setCity(e.target.value)}
                     className="w-full border rounded px-3 py-2"
                 />
             </div>
