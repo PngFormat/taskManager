@@ -1,18 +1,32 @@
-import {useState, useEffect, useMemo} from "react";
+import { useState, useEffect, useMemo } from "react";
 import TaskForm from "../components/TaskForm";
 import TaskList from "../components/TaskList";
 
-export default function Home({ tasks, addTask, toggleTask, deleteTask, bestDay, reorderTasks, onUpdateDeadline  }) {
+export default function Home({
+                                 tasks,
+                                 addTask,
+                                 toggleTask,
+                                 deleteTask,
+                                 bestDay,
+                                 reorderTasks,
+                                 onUpdateDeadline,
+                             }) {
     const [filterPriority, setFilterPriority] = useState("");
     const [filterTag, setFilterTag] = useState("");
     const [taskList, setTaskList] = useState(tasks);
 
-    const priorityOrder = {high: 1, medium: 2, low: 3}
+    useEffect(() => {
+        setTaskList(tasks);
+    }, [tasks]);
+
+    const priorityOrder = { high: 1, medium: 2, low: 3 };
 
     const filteredTasks = useMemo(() => {
         return taskList
-            .filter(task => (filterPriority ? task.priority === filterPriority : true))
-            .filter(task => (filterTag ? task.tags?.includes(filterTag) : true))
+            .filter((task) =>
+                filterPriority ? task.priority === filterPriority : true
+            )
+            .filter((task) => (filterTag ? task.tags?.includes(filterTag) : true))
             .sort((a, b) => {
                 if (priorityOrder[a.priority] !== priorityOrder[b.priority]) {
                     return priorityOrder[a.priority] - priorityOrder[b.priority];
@@ -21,17 +35,39 @@ export default function Home({ tasks, addTask, toggleTask, deleteTask, bestDay, 
             });
     }, [taskList, filterPriority, filterTag]);
 
-
     const allTags = Array.from(
-        new Set(tasks.flatMap(tasks => tasks.tags || []))
+        new Set(tasks.flatMap((tasks) => tasks.tags || []))
     );
 
-    const handleUpdateDeadline = ( taskId, newDueDate) => {
-        const updatedTasks = taskList.map(t =>
-            t._id === taskId ? {...t, dueDate: newDueDate} : t
-        );
-        setTaskList(updatedTasks);
-    }
+
+
+    const handleUpdateDeadline = async (taskId, newDueDate) => {
+        try {
+            const response = await fetch(
+                `http://localhost:5000/api/tasks/${taskId}`,
+                {
+                    method: "PUT",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({ dueDate: newDueDate }),
+                }
+            );
+
+            if (!response.ok) throw new Error("Ошибка обновления дедлайна");
+
+            const updatedTask = await response.json();
+
+            setTaskList((prevTasks) =>
+                prevTasks.map((t) => (t._id === taskId ? updatedTask : t))
+            );
+        } catch (err) {
+            console.error(err);
+            alert("Не удалось обновить дедлайн на сервере");
+        }
+    };
+
+
 
     return (
         <div className="max-w-3xl mx-auto py-10 px-4">
@@ -43,7 +79,7 @@ export default function Home({ tasks, addTask, toggleTask, deleteTask, bestDay, 
             <div className="flex space-x-4 mb-4">
                 <select
                     value={filterPriority}
-                    onChange={e => setFilterPriority(e.target.value)}
+                    onChange={(e) => setFilterPriority(e.target.value)}
                     className="border p-2 rounded"
                 >
                     <option value="">Все приоритеты</option>
@@ -54,11 +90,11 @@ export default function Home({ tasks, addTask, toggleTask, deleteTask, bestDay, 
 
                 <select
                     value={filterTag}
-                    onChange={e => setFilterTag(e.target.value)}
+                    onChange={(e) => setFilterTag(e.target.value)}
                     className="border p-2 rounded"
                 >
                     <option value="">Все теги</option>
-                    {allTags.map(tag => (
+                    {allTags.map((tag) => (
                         <option key={tag} value={tag}>
                             {tag}
                         </option>
@@ -73,6 +109,5 @@ export default function Home({ tasks, addTask, toggleTask, deleteTask, bestDay, 
                 onUpdateDeadline={handleUpdateDeadline}
             />
         </div>
-
     );
 }

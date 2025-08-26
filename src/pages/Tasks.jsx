@@ -1,6 +1,7 @@
 import {useEffect, useState} from "react";
 import {Link} from "react-router-dom";
 import useTaskAssistant from "../hooks/useTaskAssistant.tsx";
+import WeatherAdvice from "../components/WeatherAdvice.tsx";
 
 const Tasks = () => {
     const [tasks, setTasks] = useState([]);
@@ -35,6 +36,10 @@ const Tasks = () => {
                     ))}
 
                 </ul>
+            </div>
+
+            <div className="mb-6 mt-6">
+                <WeatherAdvice/>
             </div>
 
             <button
