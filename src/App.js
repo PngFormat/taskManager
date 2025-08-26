@@ -10,6 +10,7 @@ import FocusMode from "./pages/FocusMode.tsx";
 import ProductivityPage from "./pages/ProductivityPage.tsx";
 import TaskHistory from "./components/TaskHistory.tsx";
 import {autoMoveUnfinishedTasks} from "./utils/taskUtils";
+import NotesPage from "./pages/NotesPage.tsx";
 
 function App() {
     const [tasks, setTasks] = useState([]);
@@ -180,6 +181,12 @@ function App() {
                         path="archive"
                         element={
                             <TaskHistory tasks={tasks} />
+                        }
+                    />
+                    <Route
+                        path="notes"
+                        element={
+                            <NotesPage />
                         }
                     />
 
