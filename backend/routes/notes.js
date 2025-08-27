@@ -1,5 +1,5 @@
-import express from "express";
-import Note from "../models/Note.js";
+const express = require("express");
+const Note = require("../models/Note.js")
 
 const router = express.Router();
 
@@ -26,4 +26,4 @@ router.delete("/:id", async (req, res) => {
     res.json({ message: "Note deleted" });
 });
 
-export default router;
+module.exports = router;

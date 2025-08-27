@@ -4,6 +4,7 @@ export default function NotesPage() {
     const [notes, setNotes] = useState([]);
     const [tasks, setTasks] = useState([]);
     const [form, setForm] = useState({ title: "", content: "", taskId: "" });
+    const [editingId, setEditingId] = useState(null);
 
     useEffect(() => {
         fetch("http://localhost:5000/api/notes")
@@ -17,22 +18,53 @@ export default function NotesPage() {
             .then(data => setTasks(data));
     }, []);
 
-    const handleAdd = async (e) => {
+    const handleAddOrUpdate = async (e) => {
         e.preventDefault();
-        const res = await fetch("http://localhost:5000/api/notes", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(form),
-        });
-        const newNote = await res.json();
-        setNotes([...notes, newNote]);
-        setForm({ title: "", content: "", taskId: "" });
+
+        if (editingId) {
+            const res = await fetch(`http://localhost:5000/api/notes/${editingId}`, {
+                method: "PUT",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(form),
+            });
+            const updateNote = await res.json();
+
+            setNotes(notes.map(note => note._id === editingId ? updateNote : note));
+            setEditingId(null);
+        } else {
+            const res = await fetch("http://localhost:5000/api/notes", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(form),
+            });
+
+            const newNote = await res.json();
+            setNotes([...notes, newNote]);
+        }
+
+        setForm({title: "", content: "", taskId: ""})
     };
+
+    const handleEdit = (note) => {
+        setForm({
+            title: note.title,
+            content: note.content,
+            taskId: note.taskId || "",
+        });
+        setEditingId(note._id);
+    }
+
+    const handleDelete = async (id) => {
+        await fetch(`http://localhost:5000/api/notes/${id}`, {
+            method: "DELETE",
+        });
+        setNotes(notes.filter(note => note._id !== id));
+    }
 
     return (
         <div className="p-6">
             <h1 className="text-2xl font-bold mb-4">📝 Нотатки / Журнал</h1>
-            <form onSubmit={handleAdd} className="mb-6 space-y-2">
+            <form onSubmit={handleAddOrUpdate} className="mb-6 space-y-2">
                 <input
                     type="text"
                     placeholder="Заголовок"
@@ -61,8 +93,23 @@ export default function NotesPage() {
                     ))}
                 </select>
 
-                <button className="bg-blue-500 text-white px-4 py-2 rounded">Додати</button>
+                <button type="submit" className="bg-blue-500 text-white px-4 py-2 rounded">
+                    {editingId ? "Зберегти зміни" : "Додати"}
+                </button>
+                {editingId && (
+                    <button
+                        type="button"
+                        onClick={() => {
+                            setEditingId(null);
+                            setForm({ title: "", content: "", taskId: "" });
+                        }}
+                        className="ml-2 bg-gray-400 text-white px-4 py-2 rounded"
+                    >
+                        Скасувати
+                    </button>
+                )}
             </form>
+
 
             <div className="grid gap-4">
                 {notes.map(note => (
@@ -76,6 +123,24 @@ export default function NotesPage() {
                                 {tasks.find(t => t._id === note.taskId)?.title || "невідома задача"}
                             </p>
                         )}
+
+                        <div className="mt-2 flex gap-2 ">
+                            <button
+                                onClick={() => handleEdit(note)}
+                                className="bg-yellow-500 text-white px-3 py-1 rounded"
+
+                            >
+                                Редагувати
+                            </button>
+                            <button
+                                onClick={() => handleDelete(note._id)}
+                                className="bg-red-500 text-white px-3 py-1 rounded"
+
+                            >
+                                Видалити
+                            </button>
+
+                        </div>
                     </div>
                 ))}
             </div>

@@ -6,8 +6,7 @@ const Task = require("./models/tasks");
 const { generateRepeatingTasks } = require("./repeatTasks.js");
 const { autoMoveUnfinishedTasks } = require("./utils/autoMoveUnfinishedTasks.js")
 const fetch = require("node-fetch");
-import Note from "./models/Note";
-import notesRouter from "./routes/notes.js";
+const notesRouter = require("./routes/notes")
 
 dotenv.config();
 
