@@ -27,7 +27,18 @@ export default function ProductivityAnalytics({ tasks }) {
         name: priority,
         value
     }));
-    console.log(pieData);
+
+    const now = new Date();
+    const completedCount = tasks.filter(t => t.completed).length;
+    const pendingCount = tasks.filter(t => !t.completed && new Date(t.dueDate) >= now).length;
+    const overdueCount = tasks.filter(t => !t.completed && new Date(t.dueDate) < now).length;
+
+    const statusData = [
+        { name: "Виконано", value: completedCount },
+        { name: "У процесі", value: pendingCount },
+        { name: "Просрочено", value: overdueCount },
+    ]
+
 
     return (
         <div className="mt-10">
@@ -63,6 +74,30 @@ export default function ProductivityAnalytics({ tasks }) {
                                 ))}
                             </Pie>
                             <Tooltip />
+                        </PieChart>
+                    </ResponsiveContainer>
+                </div>
+
+
+                <div className="h-64">
+                    <ResponsiveContainer width="100%" height="100%">
+                        <PieChart>
+                            <Pie
+                                data={statusData}
+                                cx="50%"
+                                cy="50%"
+                                innerRadius={40}
+                                outerRadius={80}
+                                paddingAngle={5}
+                                dataKey="value"
+                                label
+                            >
+                                {statusData.map((entry, index) => (
+                                    <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                                ))}
+                            </Pie>
+                            <Tooltip />
+                            <Legend />
                         </PieChart>
                     </ResponsiveContainer>
                 </div>
