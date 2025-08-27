@@ -6,12 +6,15 @@ const Task = require("./models/tasks");
 const { generateRepeatingTasks } = require("./repeatTasks.js");
 const { autoMoveUnfinishedTasks } = require("./utils/autoMoveUnfinishedTasks.js")
 const fetch = require("node-fetch");
+const notesRouter = require("./routes/notes")
 
 dotenv.config();
 
 const app = express();
+const router = express.Router();
 app.use(cors());
 app.use(express.json());
+app.use("/api/notes", notesRouter);
 
 mongoose.connect(process.env.MONGO_URI)
     .then(() => console.log("✅ MongoDB подключена"))
@@ -94,6 +97,8 @@ app.post("/api/weather", async (req, res) => {
         res.status(500).json({ error: "Не удалось получить прогноз" });
     }
 });
+
+
 
 
 
