@@ -1,5 +1,20 @@
-import { BarChart, Bar, PieChart, Pie, Cell, XAxis, YAxis, Tooltip, Legend, ResponsiveContainer } from "recharts";
+import {
+    BarChart,
+    Bar,
+    PieChart,
+    Pie,
+    Cell,
+    XAxis,
+    YAxis,
+    Tooltip,
+    Legend,
+    ResponsiveContainer,
+    Line,
+    LineChart
+} from "recharts";
 import TaskHistory from "./TaskHistory.tsx";
+import TopProductiveDays from "./TopProductiveDays.tsx";
+
 
 const COLORS = ["#8884d8", "#82ca9d", "#ffc658", "#ff7f50", "#ff6f91", "#00c49f", "#ffbb28"];
 
@@ -38,6 +53,34 @@ export default function ProductivityAnalytics({ tasks }) {
         { name: "У процесі", value: pendingCount },
         { name: "Просрочено", value: overdueCount },
     ]
+
+    const hoursData = completedTasks.reduce((acc, task) => {
+        const hour = new Date(task.completedAt || task.updatedAt || task.dueDate).getHours();
+        acc[hour] = (acc[hour] || 0 ) + 1;
+        return acc;
+    }, {} );
+
+    const hoursChart = Object.entries(hoursData).map(([hour, count]) => ({
+        hour: `${hour}:00`,
+        tasks: count
+    }));
+
+    const weeklyData = completedTasks.reduce((acc, task) => {
+        const date = new Date(task.completedAt || task.updateAt || task.dueDate);
+        const week = `${date.getFullYear()}-W${Math.ceil(date.getDate() / 7)}`
+        acc[week] = (acc[week] || 0) + 1;
+        return acc;
+    })
+
+    const weeklyChart = Object.entries(weeklyData).map(([week, count]) => ({week, tasks: count}));
+
+    const categoryData = tasks.reduce((acc, task) => {
+        if (!task.category) return acc;
+        acc[task.category] = (acc[task.category] || 0) + 1;
+        return acc;
+    }, {});
+
+     const categoryChart = Object.entries(categoryData).map(([category, value]) => ({ name: category, value}));
 
 
     return (
@@ -101,9 +144,55 @@ export default function ProductivityAnalytics({ tasks }) {
                         </PieChart>
                     </ResponsiveContainer>
                 </div>
-                <div className="mt-8">
-                    <TaskHistory tasks={tasks} />
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-10">
+                    <div className="h-64">
+                        <ResponsiveContainer width="100%" height="100%">
+                            <BarChart data={hoursChart}>
+                                <XAxis dataKey="hour" />
+                                <YAxis />
+                                <Tooltip />
+                                <Legend />
+                                <Bar dataKey="tasks" fill="#82ca9d" />
+                            </BarChart>
+                        </ResponsiveContainer>
+                    </div>
+
+
+                    <div className="h-64">
+                        <ResponsiveContainer width="100%" height="100%">
+                            <LineChart data={weeklyChart}>
+                                <XAxis dataKey="week" />
+                                <YAxis />
+                                <Tooltip />
+                                <Legend />
+                                <Line type='monotone' dataKey="tasks" stroke='#ff6f91' />
+                            </LineChart>
+                        </ResponsiveContainer>
+                    </div>
                 </div>
+
+                {categoryChart.length > 0 && (
+                    <div className="h-64 mt-10">
+                        <ResponsiveContainer width="100%" height="100%">
+                            <PieChart>
+                                <Pie data={categoryChart} cx="50%" cy="50%" outerRadius={80} dataKey={value} label>
+                                    {categoryChart.map((entry, index) => (
+                                        <Cell key={index} fill={COLORS[index % COLORS.length]}/>
+                                    ))}
+                                </Pie>
+                                <Tooltip/>
+                                <Legend/>
+                            </PieChart>
+                        </ResponsiveContainer>
+                    </div>
+                )}
+
+                <div className="mt-10">
+                    <TopProductiveDays tasks={tasks} />
+                </div>
+
+
             </div>
         </div>
     );

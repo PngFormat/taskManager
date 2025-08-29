@@ -11,6 +11,7 @@ import ProductivityPage from "./pages/ProductivityPage.tsx";
 import TaskHistory from "./components/TaskHistory.tsx";
 import {autoMoveUnfinishedTasks} from "./utils/taskUtils";
 import NotesPage from "./pages/NotesPage.tsx";
+import ExportImportPage from "./pages/ExportImportPage.tsx";
 
 function App() {
     const [tasks, setTasks] = useState([]);
@@ -191,6 +192,15 @@ function App() {
                     />
 
                 </Route>
+
+                <Route
+                    path="export-import"
+                    element={
+                    <ExportImportPage
+                        tasks={tasks}
+                        setTasks={setTasks}
+                    />}
+                />
 
             </Routes>
         </BrowserRouter>

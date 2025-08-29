@@ -1,5 +1,6 @@
 import { NavLink } from "react-router-dom";
 
+
 const Sidebar = () => {
     const linkClass =
         "block px-4 py-2 rounded hover:bg-blue-100 text-gray-700 font-medium";
@@ -16,6 +17,7 @@ const Sidebar = () => {
                 <NavLink to="/productivity" className={linkClass}>⚡️Продуктивність</NavLink>
                 <NavLink to="/archive" className={linkClass}>🗂️️Архів</NavLink>
                 <NavLink to="/notes" className={linkClass}>📝 Нотатки</NavLink>
+                <NavLink to="/export-import" className={linkClass}>💾 Экспорт/Импорт</NavLink>
 
             </nav>
         </div>
