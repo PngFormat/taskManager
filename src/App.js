@@ -167,6 +167,7 @@ function App() {
                         element={
                             <FocusMode
                                 tasks={tasks}
+                                setTasks={setTasks}
                                 toggleTask={toggleTask}
                                 deleteTask={deleteTask}
                             />

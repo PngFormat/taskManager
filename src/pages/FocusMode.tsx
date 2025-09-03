@@ -1,9 +1,9 @@
-import PomodoroTimer from "../components/PomodoroTimer.tsx";
-import {useState} from "react";
+import { useState, useEffect } from "react";
 import TaskList from "../components/TaskList";
+import PomodoroTimer from "../components/PomodoroTimer.tsx";
 
-export default function FocusMode({ tasks, toggleTask, deleteTask}) {
-    const [isFocusActive, setIsFocusActive] = useState<boolean>(false);
+export default function FocusMode({ tasks, setTasks, toggleTask, deleteTask, updateTask }) {
+    const [isFocusActive, setIsFocusActive] = useState(false);
     const [focusedTaskId, setFocusedTaskId] = useState<string | null>(null);
 
     const startFocus = (taskId: string) => {
@@ -16,6 +16,25 @@ export default function FocusMode({ tasks, toggleTask, deleteTask}) {
         setFocusedTaskId(null);
     }
 
+    const completeTask = async (taskId: string) => {
+        try {
+            // Обновляем на сервере
+            await fetch(`http://localhost:5000/api/tasks/${taskId}`, {
+                method: "PUT",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ completed: true, completedAt: new Date().toISOString() }),
+            });
+
+            // Обновляем локальный стейт родителя
+            setTasks(prev => prev.map(t => t._id === taskId ? { ...t, completed: true } : t));
+
+            // Заканчиваем фокус
+            stopFocus();
+
+        } catch (err) {
+            console.error("Не удалось завершить задачу", err);
+        }
+    }
 
     return (
         <div className="max-w-xl mx-auto py-10">
@@ -23,16 +42,15 @@ export default function FocusMode({ tasks, toggleTask, deleteTask}) {
 
             {focusedTaskId && (
                 <PomodoroTimer
-                    onStop={() => {
-                        setIsFocusActive(false);
-                        setFocusedTaskId(null);
-                    }}
+                    task={tasks.find(t => t._id === focusedTaskId)}
+                    onStop={stopFocus}
+                    onCompleteTask={completeTask}
                 />
             )}
 
             {isFocusActive && (
                 <p className="text-center text-red-600 font-semibold">
-                    🚫 Доступна тільки задача у фокусі.
+                    🚫 Доступна только задача в фокусе.
                 </p>
             )}
 
@@ -45,8 +63,8 @@ export default function FocusMode({ tasks, toggleTask, deleteTask}) {
                     focusedTaskId={focusedTaskId}
                     onFocusSelect={startFocus}
                 />
-
             </div>
         </div>
-    )
+    );
 }
+

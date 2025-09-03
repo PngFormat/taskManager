@@ -7,7 +7,7 @@ const TIMER_MODES = {
     longBreak: 15 * 60,
 };
 
-export default function PomodoroTimer({ task, onCycleComplete, onStart, onStop }) {
+export default function PomodoroTimer({ task, onCycleComplete, onStart, onStop, onCompleteTask }) {
     const [seconds, setSeconds] = useState(TIMER_MODES.focus);
     const [mode, setMode] = useState("focus");
     const [isRunning, setIsRunning] = useState(false);
@@ -101,6 +101,17 @@ export default function PomodoroTimer({ task, onCycleComplete, onStart, onStop }
         });
     };
 
+    const finishTask = () => {
+        setIsRunning(false);
+        clearInterval(intervalRef.current);
+        logEvent("complete", mode);
+
+        if (onCompleteTask && task) {
+            onCompleteTask(task._id);
+        }
+        onStop?.(task);
+    }
+
     const mm = String(Math.floor(seconds / 60)).padStart(2, "0");
     const ss = String(seconds % 60).padStart(2, "0");
 
@@ -143,6 +154,13 @@ export default function PomodoroTimer({ task, onCycleComplete, onStart, onStop }
                     className="px-3 py-1 bg-red-600 text-white rounded"
                 >
                     Перерва
+                </button>
+
+                <button
+                    onClick={finishTask}
+                    className="px-3 py-1 bg-blue-600 text-white rounded"
+                >
+                    Завершити задачу
                 </button>
             </div>
         </div>
