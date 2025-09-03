@@ -203,7 +203,7 @@ function App() {
                     />}
                 />
                 <Route
-                    path="export-import"
+                    path="research"
                     element={
                         <ResearchPage
                         />}

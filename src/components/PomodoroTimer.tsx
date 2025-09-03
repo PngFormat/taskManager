@@ -1,6 +1,5 @@
 import {useEffect, useRef, useState} from "react";
 import {useMethodTracking} from "../hooks/useMethodTracking.tsx";
-import next from "ajv/dist/vocabularies/next";
 
 const TIMER_MODES = {
     focus: 25 * 60,
@@ -8,7 +7,7 @@ const TIMER_MODES = {
     longBreak: 15 * 60,
 };
 
-export default function PomodoroTimer({onCycleComplete, onStart, onStop}) {
+export default function PomodoroTimer({ task, onCycleComplete, onStart, onStop }) {
     const [seconds, setSeconds] = useState(TIMER_MODES.focus);
     const [mode, setMode] = useState("focus");
     const [isRunning, setIsRunning] = useState(false);
@@ -55,8 +54,6 @@ export default function PomodoroTimer({onCycleComplete, onStart, onStop}) {
         clearInterval(intervalRef.current);
         logEvent("interrupt");
     }
-
-    const handle
 
     useEffect(() => {
         if (!isRunning) return;

@@ -34,7 +34,7 @@ app.post("/api/tasks", async (req,res) => {
 });
 
 app.put("/api/tasks/:id", async (req, res) => {
-    const updateData = {...reg.body};
+    const updateData = {...req.body};
 
     if (updateData.completed === true) {
         updateData.completedAt = new Date();
@@ -44,7 +44,7 @@ app.put("/api/tasks/:id", async (req, res) => {
 
     try {
         const updatedTask = await Task.findByIdAndUpdate(
-            reg.params.id,
+            req.params.id,
             updateData,
             {new: true}
         );
@@ -128,12 +128,12 @@ app.get("/api/experiment/report", async (req, res) => {
 
         for (const t of tasks) {
             const m = t.method || "Pomodoro";
-            (byMethod[m] ||= { done: 0, onTime: 0, totalCycleMin: 0, cnt: 0, interruptions: 0});
+            (byMethod[m] ||= { done: 0, onTime: 0, totalCycleMin: 0, cnt: 0, interruptions: 0 });
 
             const taskLogs = logsByTask[t._id] || [];
             const interruptCount = taskLogs.filter(l => l.event === "interrupt").length;
 
-            const completed = t.completed && t.completedAt;
+            const completed = t.completed === true && !!t.completedAt;
             const start = t.startedAt || t.createdAt;
             const end = t.completedAt || new Date();
 
@@ -145,25 +145,27 @@ app.get("/api/experiment/report", async (req, res) => {
                 byMethod[m].totalCycleMin += cycleMin;
 
                 const onTime = t.dueDate ? (new Date(t.completedAt) <= new Date(t.dueDate)) : true;
-                if (onTime) byMethod.onTime +=1;
+                if (onTime) byMethod[m].onTime += 1;
             }
+
             byMethod[m].interruptions += interruptCount;
         }
 
         const report = Object.entries(byMethod).map(([method, v]) => ({
             method,
             completed: v.done,
-            onTimeRate: v.done ? + (v.onTimeRate / v.done).toFixed(2) : 0,
-            avgCyclyMinutes: v.cnt ? Math.round(v.totalCycleMin / v.cnt) : 0,
+            onTimeRate: v.done ? +(v.onTime / v.done).toFixed(2) : 0,
+            avgCycleMinutes: v.cnt ? Math.round(v.totalCycleMin / v.cnt) : 0,
             interruptions: v.interruptions,
         }));
 
-        res.json({report});
+        res.json({ report });
     } catch (err) {
         console.error(err);
-        res.status(500).json({error: "Failed to build report"});
+        res.status(500).json({ error: "Failed to build report" });
     }
 });
+
 
 
 generateRepeatingTasks();

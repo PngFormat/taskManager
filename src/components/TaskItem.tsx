@@ -1,4 +1,4 @@
-import {useState} from "react";
+import { useState } from "react";
 
 export default function TaskItem({
                                      task,
@@ -9,17 +9,16 @@ export default function TaskItem({
                                      innerRef,
                                      dragProps,
                                      onFocusSelect,
-                                     isFocused }) {
+                                     isFocused,
+                                 }) {
+    const [editingDeadline, setEditingDeadline] = useState(false);
+    const [newDeadline, setNewDeadline] = useState(task.dueDate || "");
 
-    const [editingDeadline , setEditingDeadline] = useState(false);
-    const [newDeadline, setNewDeadline] = useState(task.dueDate || "")
-
-
-    const priorityColors = {
+    const priorityColors: Record<string, string> = {
         high: "text-red-600",
         medium: "text-yellow-600",
         low: "text-green-600",
-    }
+    };
 
     const handleSaveDeadline = () => {
         if (newDeadline) {
@@ -29,29 +28,32 @@ export default function TaskItem({
         setEditingDeadline(false);
     };
 
-
     return (
         <div
             ref={innerRef}
             {...dragProps}
             className={`p-3 rounded border shadow-sm flex justify-between items-center 
-            ${task.completed ? "bg-green-100 line-through text-gray-500" : "bg-white"} 
-            ${disabled && !isFocused ? "opacity-50 cursor-not-allowed" : ""}`}
+        ${task.completed ? "bg-green-100 line-through text-gray-500" : "bg-white"} 
+        ${disabled && !isFocused ? "opacity-50 cursor-not-allowed" : ""}`}
         >
+            {/* Ліва частина (текст, пріоритет, дедлайн) */}
             <div
                 className={`flex-1 ${disabled ? "pointer-events-none" : "cursor-pointer"}`}
                 onClick={() => !(disabled && !isFocused) && onToggle(task._id)}
-
             >
+                <div className="font-medium">{task.title}</div>
 
-            <div className="font-medium">{task.title}</div>
                 <div className={`font-semibold ${priorityColors[task.priority]}`}>
-                    {task.priority === "high" ? "🔥" : task.priority === "medium" ? "⚡" : "✅" }
+                    {task.priority === "high"
+                        ? "🔥"
+                        : task.priority === "medium"
+                            ? "⚡"
+                            : "✅"}
                 </div>
 
-                <div className="flex items-center space-x-2">
+                <div className="flex items-center space-x-2 mt-1">
                     {editingDeadline ? (
-                        <div className="flex items-center space-x-1">
+                        <>
                             <input
                                 type="date"
                                 value={newDeadline ? newDeadline.split("T")[0] : ""}
@@ -69,56 +71,55 @@ export default function TaskItem({
                                 ✔
                             </button>
                             <button
-                                onClick={(e) =>  {
+                                onClick={(e) => {
                                     e.stopPropagation();
-                                    setEditingDeadline(false)
+                                    setEditingDeadline(false);
                                 }}
                                 className="text-red-500 font-bold"
                             >
                                 ✖
                             </button>
-                        </div>
+                        </>
                     ) : (
                         <>
-                        <span className="text-sm text-gray-500">
-                            📅 {task.dueDate ? new Date(task.dueDate).toLocaleDateString() : "нет срока"}
-                        </span>
+              <span className="text-sm text-gray-500">
+                📅 {task.dueDate ? new Date(task.dueDate).toLocaleDateString() : "немає"}
+              </span>
                             <button
                                 onClick={(e) => {
                                     e.stopPropagation();
-                                    setEditingDeadline(true)
+                                    setEditingDeadline(true);
                                 }}
                                 className="text-blue-500 hover:underline"
                             >
-                                Изм.
+                                Змінити
                             </button>
                         </>
                     )}
-
-                    <button
-                        onClick={onDelete}
-                        className="text-red-500 hover:underline"
-                    >
-                        ❌
-                    </button>
                 </div>
             </div>
-            {!isFocused && !disabled && (
-                <button
-                    onClick={onFocusSelect}
-                    className="px-2 py-1 bg-blue-500 text-white rounded hover:bg-blue-600 ml-2"
-                >
-                    🎯
-                </button>
-            )}
 
-            <button
-                onClick={onDelete}
-                className={`text-sm ml-4 ${disabled ? "text-gray-500" : "text-red-600 hover:underline ml-4"}`}
-                disabled={disabled}
-            >
-                🗑 Видалити
-            </button>
+            {/* Права частина (кнопки дій) */}
+            <div className="flex items-center space-x-2 ml-3">
+                {!isFocused && !disabled && (
+                    <button
+                        onClick={onFocusSelect}
+                        className="px-2 py-1 bg-blue-500 text-white rounded hover:bg-blue-600"
+                    >
+                        🎯
+                    </button>
+                )}
+
+                <button
+                    onClick={onDelete}
+                    className={`px-2 py-1 rounded ${
+                        disabled ? "text-gray-400" : "text-red-600 hover:bg-red-100"
+                    }`}
+                    disabled={disabled}
+                >
+                    🗑
+                </button>
+            </div>
         </div>
     );
 }

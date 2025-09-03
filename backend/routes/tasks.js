@@ -3,11 +3,11 @@ import Task from "../models/Task.js";
 
 const router = express.Router();
 
-router.put("/:id/complete", async (reg, res) => {
+router.put("/:id/complete", async (req, res) => {
     try {
         const { timeSpent } = req.body;
         const task = await Task.findByIdAndUpdate(
-            reg.params.id,
+            req.params.id,
             {
                 status: "completed",
                 completedAt: new Date(),

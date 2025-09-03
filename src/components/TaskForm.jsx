@@ -48,9 +48,9 @@ export default function TaskForm({ onAdd }) {
             tags,
             repeat,
             method,
-            estimatedMinutes,
-            importance,
-            urgency
+            estimatedMinutes: estimatedMinutes ? Number(estimatedMinutes) : 25,
+            importance: importance ? Number(importance) : 3,
+            urgency: urgency ? Number(urgency) : 3,
         });
 
 

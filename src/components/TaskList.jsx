@@ -1,4 +1,4 @@
-import TaskItem from "./TaskItem";
+import TaskItem from "./TaskItem.tsx";
 import { DragDropContext, Droppable, Draggable } from "@hello-pangea/dnd";
 
 

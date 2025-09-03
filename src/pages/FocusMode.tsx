@@ -46,7 +46,6 @@ export default function FocusMode({ tasks, toggleTask, deleteTask}) {
                     onFocusSelect={startFocus}
                 />
 
-
             </div>
         </div>
     )
