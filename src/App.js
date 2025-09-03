@@ -12,6 +12,7 @@ import TaskHistory from "./components/TaskHistory.tsx";
 import {autoMoveUnfinishedTasks} from "./utils/taskUtils";
 import NotesPage from "./pages/NotesPage.tsx";
 import ExportImportPage from "./pages/ExportImportPage.tsx";
+import ResearchPage from "./pages/ResearchPage.tsx";
 
 function App() {
     const [tasks, setTasks] = useState([]);
@@ -166,6 +167,7 @@ function App() {
                         element={
                             <FocusMode
                                 tasks={tasks}
+                                setTasks={setTasks}
                                 toggleTask={toggleTask}
                                 deleteTask={deleteTask}
                             />
@@ -200,6 +202,12 @@ function App() {
                         tasks={tasks}
                         setTasks={setTasks}
                     />}
+                />
+                <Route
+                    path="research"
+                    element={
+                        <ResearchPage
+                        />}
                 />
 
             </Routes>

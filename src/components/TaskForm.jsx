@@ -10,6 +10,11 @@ export default function TaskForm({ onAdd }) {
     const [repeat, setRepeat] = useState("none");
     const [selectedTemplate, setSelectedTemplate] = useState("");
     const [submitted, setSubmitted] = useState(false);
+    const [method, setMethod] = useState("")
+    const [estimatedMinutes, setEstimatedMinutes] = useState("");
+    const [importance, setImportance] = useState("");
+    const [urgency, setUrgency] = useState("");
+
 
     const handleTemplateChange = (e) => {
         const templateName = e.target.value;
@@ -41,8 +46,13 @@ export default function TaskForm({ onAdd }) {
             dueDate,
             priority,
             tags,
-            repeat
+            repeat,
+            method,
+            estimatedMinutes: estimatedMinutes ? Number(estimatedMinutes) : 25,
+            importance: importance ? Number(importance) : 3,
+            urgency: urgency ? Number(urgency) : 3,
         });
+
 
         setTitle("");
         setDueDate("");
@@ -112,6 +122,50 @@ export default function TaskForm({ onAdd }) {
                 <option value="weekly">Кожного тижня</option>
                 <option value="monthly">Кожного місяця</option>
             </select>
+
+            <select
+                value={method}
+                onChange={e => setMethod(e.target.value)}
+                className="w-full border p-2 rounded"
+            >
+                <option value="Pomodoro">Pomodoro</option>
+                <option value="GTD">GTD</option>
+                <option value="Kanban">Kanban</option>
+                <option value="Eisenhower">Eisenhower</option>
+            </select>
+
+            <input
+                type="number"
+                min={5}
+                step={5}
+                placeholder="Оцінка (хв)"
+                value={estimatedMinutes}
+                onChange={e => setEstimatedMinutes(Number(e.target.value))}
+                className="w-full border p-2 rounded"
+            />
+
+            <div className="grid grid-cols-2 gap-2">
+                <input
+                    type="number"
+                    min={1}
+                    max={5}
+                    value={importance}
+                    onChange={e => setImportance(Number(e.target.value))}
+                    className="border p-2 rounded"
+                    placeholder="Важливість (1-5)"
+                />
+                <input
+                    type="number"
+                    min={1}
+                    max={5}
+                    value={urgency}
+                    onChange={e => setUrgency(Number(e.target.value))}
+                    className="border p-2 rounded"
+                    placeholder="Терміновість (1-5)"
+                />
+            </div>
+
+
             <button
                 type="submit"
                 className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition"
