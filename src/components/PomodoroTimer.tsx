@@ -14,6 +14,7 @@ export default function PomodoroTimer({ task, onCycleComplete, onStart, onStop, 
     const [cycles, setCycles] = useState(0);
     const intervalRef = useRef(null);
     const { log } = useMethodTracking();
+    const [animate, setAnimate] = useState(false);
 
     useEffect(() => clearInterval(intervalRef.current), []);
 
@@ -72,14 +73,28 @@ export default function PomodoroTimer({ task, onCycleComplete, onStart, onStop, 
         return () => clearInterval(interval);
     }, [isRunning])
 
-    const handleFinish = () => {
+    const handleFinish = async () => {
 
         setIsRunning(false);
         logEvent("complete", mode);
 
+        const audio = new Audio("/notify.mp3");
+        audio.play().catch(() => {});
+
+        setAnimate(true);
+        setTimeout(() => setAnimate(false), 1500);
+
         if (mode === "focus") {
             const newCycles = cycles + 1;
             setCycles(newCycles);
+
+            if ( task ) {
+                await fetch(`http://localhost:5000/api/tasks/${task._id}`, {
+                    method: "PUT",
+                    headers: { "Content-Type" : "application/json" },
+                    body: JSON.stringify({pomodoroCycles: newCycles}),
+                });
+            }
             const nextMode = newCycles % 4 === 0 ? "longBreak" : "shortBreak";
             setMode(nextMode);
             setSeconds(TIMER_MODES[nextMode]);
@@ -115,9 +130,18 @@ export default function PomodoroTimer({ task, onCycleComplete, onStart, onStop, 
     const mm = String(Math.floor(seconds / 60)).padStart(2, "0");
     const ss = String(seconds % 60).padStart(2, "0");
 
+    const totalTime = TIMER_MODES[mode];
+    const progress = Math.min(((totalTime - seconds) / totalTime) * 100, 100);
+
 
     return (
-        <div className="p-3 border rounded flex flex-col items-center gap-3">
+        <div className={`p-3 border rounded flex flex-col items-center gap-3 transition ${animate ? "animate-pulse bg-green-100" : ""}`}>
+            <h2 className="text-lg font-bold text-center">
+                Задача: <span className="text-blue-600"> {task?.title}</span>
+                {task?.dueDate && (
+                    <span className="text-sm text-gray-500 ml-2">(Дедлайн: {new Date(task.dueDate).toLocaleDateString()})</span>
+                )}
+            </h2>
             <h2 className="text-xl font-bold capitalize">
                 {mode === "focus"
                     ? "Фокус"
@@ -128,40 +152,23 @@ export default function PomodoroTimer({ task, onCycleComplete, onStart, onStop, 
 
             <div className="text-4xl"> {mm}: {ss}</div>
 
-            <div className="flex gap-2">
-                <button
-                    onClick={start}
-                    className="px-4 py-1 bg-green-600 text-white rounded"
-                >
-                    Старт
-                </button>
+            <div className="w-full bg-gray-200 rounded h-4 overflow-hidden">
+                <div
+                    className="bg-green-500 h-4 transition-all"
+                    style={{width: `${progress}%`}}
+                />
+            </div>
+            <p className="text-sm text-gray-700">
+                Заверешно циклів: {cycles} з 4
+            </p>
 
-                <button
-                    onClick={pause}
-                    className="px-4 py-2 bg-yellow-500 text-white rounded"
-                >
-                    Пауза
-                </button>
-                <button
-                    onClick={reset}
-                    className="px-3 py-1 bg-gray-600 text-white rounded"
-                >
-                    Скинути
-                </button>
-
-                <button
-                    onClick={interrupt}
-                    className="px-3 py-1 bg-red-600 text-white rounded"
-                >
-                    Перерва
-                </button>
-
-                <button
-                    onClick={finishTask}
-                    className="px-3 py-1 bg-blue-600 text-white rounded"
-                >
-                    Завершити задачу
-                </button>
+            <div className="flex flex-wrap gap-2 justify-center">
+                <button onClick={start} className="px-4 py-1 bg-green-600 text-white rounded">Старт</button>
+                <button onClick={pause} className="px-4 py-1 bg-yellow-500 text-white rounded">Пауза</button>
+                <button onClick={reset} className="px-3 py-1 bg-gray-600 text-white rounded">Скинути</button>
+                <button onClick={interrupt} className="px-3 py-1 bg-red-600 text-white rounded">Перерва</button>
+                <button onClick={finishTask} className="px-3 py-1 bg-blue-600 text-white rounded">Завершити задачу</button>
+                <button onClick={onStop} className="px-3 py-1 bg-purple-600 text-white rounded">Снять фокус</button>
             </div>
         </div>
     );
