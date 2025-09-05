@@ -18,17 +18,14 @@ export default function FocusMode({ tasks, setTasks, toggleTask, deleteTask, upd
 
     const completeTask = async (taskId: string) => {
         try {
-            // Обновляем на сервере
             await fetch(`http://localhost:5000/api/tasks/${taskId}`, {
                 method: "PUT",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ completed: true, completedAt: new Date().toISOString() }),
             });
 
-            // Обновляем локальный стейт родителя
             setTasks(prev => prev.map(t => t._id === taskId ? { ...t, completed: true } : t));
 
-            // Заканчиваем фокус
             stopFocus();
 
         } catch (err) {
@@ -53,6 +50,7 @@ export default function FocusMode({ tasks, setTasks, toggleTask, deleteTask, upd
                     🚫 Доступна только задача в фокусе.
                 </p>
             )}
+
 
             <div className={`${isFocusActive ? "opacity-50 pointer-events-none" : ""}`}>
                 <TaskList
