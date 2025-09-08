@@ -4,7 +4,6 @@ import PomodoroProgress from "./PomodoroProgress.tsx";
 import PomodoroSettings from "./PomodoroSettings.tsx";
 import PomodoroControls from "./PomodoroControls.tsx";
 
-
 export default function PomodoroTimer({ task, onStop, onCompleteTask }) {
 
     const defaultSettings = {
@@ -26,18 +25,21 @@ export default function PomodoroTimer({ task, onStop, onCompleteTask }) {
     const { log } = useMethodTracking();
     const [animate, setAnimate] = useState(false);
 
-    const getModeTime = (m: "focus" | "shortBreak" | "longBreak") => {
-        if (m === "focus") return settings.focus * 60;
-        if (m === "shortBreak") return settings.shortBreak * 60;
-        if (m === "longBreak") return settings.longBreak * 60;
-        return settings.focus * 60;
-    };
 
     useEffect(() => clearInterval(intervalRef.current), []);
 
     useEffect(() => {
-        setSeconds(getModeTime(mode));
-    }, [settings, mode ])
+        if (mode === "focus") setSeconds(settings.focus * 60);
+        if (mode === "shortBreak") setSeconds(settings.shortBreak * 60);
+        if (mode === "longBreak") setSeconds(settings.longBreak * 60);
+    }, [settings, mode]);
+
+    const getModeTime = (m) => {
+        if (m === "focus") return settings.focus * 60;
+        if (m === "shortBreak") return settings.shortBreak * 60;
+        if (m === "longBreak") return settings.longBreak * 60;
+        return 0;
+    };
 
     const start = () => {
         if (isRunning) return;
@@ -139,18 +141,21 @@ export default function PomodoroTimer({ task, onStop, onCompleteTask }) {
     const totalTime = getModeTime(mode);
     const progress = Math.min(((totalTime - seconds) / totalTime) * 100, 100);
 
+    const bgColors = {
+        focus: isRunning ? "bg-red-200" : "bg-red-300",
+        shortBreak: isRunning ? "bg-green-200" : "bg-green-300",
+        longBreak: isRunning ? "bg-blue-200" : "bg-blue-300",
+    };
+
 
     return (
         <div
-            className={`p-3 border rounded flex flex-col items-center gap-3 transition ${
-                animate ? "animate-pulse bg-green-100" : ""
-            }`}
+            className={`p-6 rounded-2xl shadow-lg flex flex-col items-center gap-4 transition-colors duration-700 ${bgColors[mode]}`}
         >
             <h2 className="text-lg font-bold text-center">
                 Задача: <span className="text-blue-600">{task?.title}</span>
+                <PomodoroSettings settings={settings} setSettings={setSettings} />
             </h2>
-
-            <PomodoroSettings settings={settings} setSettings={setSettings} />
 
             <h2 className="text-xl font-bold capitalize">
                 {mode === "focus"
@@ -160,21 +165,40 @@ export default function PomodoroTimer({ task, onStop, onCompleteTask }) {
                         : "Довга перерва"}
             </h2>
 
-            <div className="text-4xl">
-                {mm}:{ss}
+            <div className="relative w-48 h-48 flex items-center justify-center">
+                <svg className="w-48 h-48 transform -rotate-90">
+                    <circle
+                        cx="96"
+                        cy="96"
+                        r="90"
+                        stroke="currentColor"
+                        strokeWidth="12"
+                        fill="none"
+                        className="text-gray-300"
+                    />
+                    <circle
+                        cx="96"
+                        cy="96"
+                        r="90"
+                        stroke="currentColor"
+                        strokeWidth="12"
+                        fill="none"
+                        className="text-green-500 transition-all duration-500"
+                        strokeDasharray={2 * Math.PI * 90}
+                        strokeDashoffset={
+                            2 * Math.PI * 90 * (1 - progress / 100)
+                        }
+                    />
+                </svg>
+                <div className="absolute text-3xl font-bold">
+                    {mm}:{ss}
+                </div>
             </div>
 
             <PomodoroProgress
                 cycles={cycles}
                 cyclesBeforeLongBreak={settings.cyclesBeforeLongBreak}
             />
-
-            <div className="w-full bg-gray-200 rounded h-4 overflow-hidden">
-                <div
-                    className="bg-green-500 h-4 transition-all"
-                    style={{ width: `${progress}%` }}
-                />
-            </div>
 
             <p className="text-sm text-gray-700">
                 Завершено циклів: {cycles} з {settings.cyclesBeforeLongBreak}
@@ -188,7 +212,6 @@ export default function PomodoroTimer({ task, onStop, onCompleteTask }) {
                 finishTask={finishTask}
                 onStop={onStop}
             />
-
         </div>
     );
 }

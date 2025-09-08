@@ -13,6 +13,8 @@ import {autoMoveUnfinishedTasks} from "./utils/taskUtils";
 import NotesPage from "./pages/NotesPage.tsx";
 import ExportImportPage from "./pages/ExportImportPage.tsx";
 import ResearchPage from "./pages/ResearchPage.tsx";
+import {AnimatePresence, motion} from "framer-motion";
+import PageWrapper from "./components/motion/PageWrapper.tsx";
 
 function App() {
     const [tasks, setTasks] = useState([]);
@@ -129,67 +131,87 @@ function App() {
 
     return (
         <BrowserRouter>
-            <Routes>
+            <AnimatePresence mode="wait">
+                <Routes>
                 <Route path="/" element={<Layout />}>
                     <Route
                         index
                         element={
-                            <Home
-                                tasks={tasks}
-                                addTask={addTask}
-                                toggleTask={toggleTask}
-                                deleteTask={deleteTask}
-                                bestDay={bestDay}
-                                reorderTasks={reorderTasks}
-                            />
+                            <PageWrapper>
+                                <Home
+                                    tasks={tasks}
+                                    addTask={addTask}
+                                    toggleTask={toggleTask}
+                                    deleteTask={deleteTask}
+                                    bestDay={bestDay}
+                                    reorderTasks={reorderTasks}
+                                />
+                            </PageWrapper>
 
                         }
                     />
-                    <Route path="calendar" element={<Calendar tasks={tasks} onAddTask={addTask} />} />
+
+                        <Route path="calendar" element={
+                            <PageWrapper>
+                                <Calendar tasks={tasks} onAddTask={addTask} />
+                        </PageWrapper>} />
+
                     <Route
                         path="tasks"
                         element={
-                            <Tasks
-                                tasks={tasks}
-                                addTask={addTask}
-                                toggleTask={toggleTask}
-                                deleteTask={deleteTask}
-                            />
+                            <PageWrapper>
+                                <Tasks
+                                    tasks={tasks}
+                                    addTask={addTask}
+                                    toggleTask={toggleTask}
+                                    deleteTask={deleteTask}
+                                />
+                            </PageWrapper>
                         }
                     />
                     <Route path="settings" element={
-                        <Settings
-                            maxTasksPerDay={maxTasksPerDay}
-                            setMaxTasksPerDay={setMaxTasksPerDay}
-                    />} />
+                        <PageWrapper>
+                            <Settings
+                                maxTasksPerDay={maxTasksPerDay}
+                                setMaxTasksPerDay={setMaxTasksPerDay}
+                        />
+                        </PageWrapper>} />
                     <Route
                         path="focus-mode"
                         element={
+                        <PageWrapper>
                             <FocusMode
                                 tasks={tasks}
                                 setTasks={setTasks}
                                 toggleTask={toggleTask}
                                 deleteTask={deleteTask}
                             />
+                        </PageWrapper>
                         }
                     />
                     <Route
                         path="productivity"
                         element={
+                        <PageWrapper>
                             <ProductivityPage tasks={tasks} />
+                        </PageWrapper>
                         }
                     />
 
                     <Route
                         path="archive"
                         element={
-                            <TaskHistory tasks={tasks} />
+                            <PageWrapper>
+                                <TaskHistory tasks={tasks} />
+                            </PageWrapper>
                         }
                     />
                     <Route
                         path="notes"
                         element={
+                        <PageWrapper>
                             <NotesPage />
+                        </PageWrapper>
                         }
                     />
 
@@ -198,19 +220,24 @@ function App() {
                 <Route
                     path="export-import"
                     element={
-                    <ExportImportPage
-                        tasks={tasks}
-                        setTasks={setTasks}
-                    />}
+                    <PageWrapper>
+                        <ExportImportPage
+                            tasks={tasks}
+                            setTasks={setTasks}
+                        />
+                    </PageWrapper>}
                 />
                 <Route
                     path="research"
                     element={
+                    <PageWrapper>
                         <ResearchPage
-                        />}
+                        />
+                    </PageWrapper>}
                 />
 
             </Routes>
+            </AnimatePresence>
         </BrowserRouter>
     );
 }
