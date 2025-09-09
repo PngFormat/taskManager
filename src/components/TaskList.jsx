@@ -10,8 +10,8 @@ export default function TaskList({
                                      disabled,
                                      focusedTaskId,
                                      onFocusSelect,
-                                     onUpdateDeadline
-
+                                     onUpdateDeadline,
+                                     viewMode
                                  }) {
     const handleDragEnd = (result) => {
         if (!result.destination) return;
@@ -25,14 +25,22 @@ export default function TaskList({
         }, 0);
     };
 
+
+
     return (
         <DragDropContext onDragEnd={handleDragEnd}>
-            <Droppable droppableId="tasklist">
+            <Droppable droppableId="tasklist" direction={viewMode === "grid" ? "horizontal" : "vertical"}>
                 {(provided) => (
                     <div
                         {...provided.droppableProps}
                         ref={provided.innerRef}
-                        className="space-y-2"
+                        className={
+                            viewMode === "grid"
+                                ? "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4"
+                                : "space-y-2"
+                        }
+
+
                     >
 
                         {tasks.map((task, index) => {
