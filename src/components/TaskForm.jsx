@@ -66,103 +66,147 @@ export default function TaskForm({ onAdd }) {
 
 
     return (
-        <form onSubmit={handleSubmit} className="space-y-2 mb-4">
-            <select
-                value={selectedTemplate}
-                onChange={handleTemplateChange}
-                className="w-full border p-2 rounded"
-            >
-                <option value="">Выбрати шаблон (необов'язково)</option>
-                {TASK_TEMPLATES.map(t => (
-                    <option key={t.name} value={t.name}>
-                        {t.name}
-                    </option>
-                ))}
-            </select>
-            <input
-                type="text"
-                placeholder="Новая задача"
-                value={title}
-                onChange={e => setTitle(e.target.value)}
-                className={`w-full border p-2 rounded  ${ 
-                    submitted && !title.trim() ? "border-red-500 bg-red-100" : ""}`}
-            />
-            <input
-                type="date"
-                value={dueDate}
-                onChange={e => setDueDate(e.target.value)}
-                className={`w-full border p-2 rounded ${
-                    submitted && !dueDate.trim() ? "border-red-500 bg-red-100" : ""
-                }`}
-            />
-            <select
-                value={priority}
-                onChange={e => setPriority(e.target.value)}
-                className="w-full border p-2 rounded"
-            >
-                <option value="high">Высокий приоритет</option>
-                <option value="medium">Средний приоритет</option>
-                <option value="low">Низкий приоритет</option>
-            </select>
-            <input
-                type="text"
-                placeholder="Теги через запятую (например: работа, учеба)"
-                value={tagsInput}
-                onChange={e => setTagsInput(e.target.value)}
-                className="w-full border p-2 rounded"
-            />
+        <form onSubmit={handleSubmit}
+              className="bg-white shadow-md rounded-2xl p-6 space-y-4 border border-gray-200"
+        >
+            <h3 className="text-xl font-semibold text-blue-600">➕ Нова задача</h3>
 
-            <select
-                value={repeat}
-                onChange={e => setRepeat(e.target.value)}
-                className="w-full border p-2 rounded"
-            >
-                <option value="none">Без повторення</option>
-                <option value="daily">Кожен день</option>
-                <option value="weekly">Кожного тижня</option>
-                <option value="monthly">Кожного місяця</option>
-            </select>
+            <div>
+                <label className="block text-sm text-gray-600 mb-1">
+                    Використати шаблон
+                </label>
 
-            <select
-                value={method}
-                onChange={e => setMethod(e.target.value)}
-                className="w-full border p-2 rounded"
-            >
-                <option value="Pomodoro">Pomodoro</option>
-                <option value="GTD">GTD</option>
-                <option value="Kanban">Kanban</option>
-                <option value="Eisenhower">Eisenhower</option>
-            </select>
+                <select
+                    value={selectedTemplate}
+                    onChange={handleTemplateChange}
+                    className="w-full border p-2 rounded"
+                >
+                    <option value="">Необов'язково</option>
+                    {TASK_TEMPLATES.map(t => (
+                        <option key={t.name} value={t.name}>
+                            {t.name}
+                        </option>
+                    ))}
+                </select>
+            </div>
 
-            <input
-                type="number"
-                min={5}
-                step={5}
-                placeholder="Оцінка (хв)"
-                value={estimatedMinutes}
-                onChange={e => setEstimatedMinutes(Number(e.target.value))}
-                className="w-full border p-2 rounded"
-            />
+            <div>
+                <label className="block text-sm text-gray-600 mb-1">Назва</label>
+                <input
+                    type="text"
+                    placeholder="Наприклад: зробити звіт"
+                    value={title}
+                    onChange={e => setTitle(e.target.value)}
+                    className={`w-full border p-2 rounded-lg border p-2 focus:ring-2 focus:ring-blue-500  ${
+                        submitted && !title.trim() ? "border-red-500 bg-red-50" : ""
+                    }`}
+                />
+            </div>
+
+            <div>
+                <label className="block text-sm text-gray-600 mb-1">Дедлайн</label>
+                <input
+                    type="date"
+                    value={dueDate}
+                    onChange={e => setDueDate(e.target.value)}
+                    className={`w-full border p-2 rounded-lg border p-2 focus:ring-2 focus:ring-blue-500  ${
+                        submitted && !title.trim() ? "border-red-500 bg-red-50" : ""
+                    }`}
+                />
+            </div>
+
+            <div>
+                <label className="block text-sm text-gray-600 mb-1">Пріоритет</label>
+                <select
+                    value={priority}
+                    onChange={e => setPriority(e.target.value)}
+                    className="w-full border-gray-300 rounded-lg p-2 focus:ring-2 focus:ring-blue-500"
+                >
+                    <option value="high">🔴 Високий</option>
+                    <option value="medium">🟡 Середній</option>
+                    <option value="low">🟢 Низький</option>
+                </select>
+            </div>
+
+            <div>
+                <label className="block text-sm text-gray-600 mb-1">Теги</label>
+                <input
+                    type="text"
+                    placeholder="робота,навчання"
+                    value={tagsInput}
+                    onChange={e => setTagsInput(e.target.value)}
+                    className="w-full border-gray-300 rounded-lg p-2 focus:ring-2 focus:ring-blue-500"
+                />
+            </div>
+
+            <div>
+                <label className="block text-sm text-gray-600 mb-1">Повторення</label>
+                <select
+                    value={repeat}
+                    onChange={e => setRepeat(e.target.value)}
+                    className="w-full border p-2 rounded"
+                >
+                    <option value="none">Без повторення</option>
+                    <option value="daily">Щодня</option>
+                    <option value="weekly">Щотижня</option>
+                    <option value="monthly">Щомісяця</option>
+                </select>
+            </div>
+
+            <div>
+                <label className="block text-sm text-gray-600 mb-1">Метод</label>
+                <select
+                    value={method}
+                    onChange={e => setMethod(e.target.value)}
+                    className="w-full border-gray-300 rounded-lg p-2 focus:ring-2 focus:ring-blue-500"
+
+                >
+                    <option value="Pomodoro">🍅 Pomodoro</option>
+                    <option value="GTD">📌 GTD</option>
+                    <option value="Kanban">📊 Kanban</option>
+                    <option value="Eisenhower">⏳ Eisenhower</option>
+                </select>
+            </div>
+
+            <div>
+                <label className="block text-sm text-gray-600 mb-1">
+                    Оцінка (хвилини)
+                </label>
+
+                <input
+                    type="number"
+                    min={5}
+                    step={5}
+                    placeholder="Оцінка (хв)"
+                    value={estimatedMinutes}
+                    onChange={e => setEstimatedMinutes(Number(e.target.value))}
+                    className="w-full rounded-lg border p-2 focus:ring-2 focus:ring-blue-500"
+                />
+            </div>
 
             <div className="grid grid-cols-2 gap-2">
-                <input
-                    type="number"
-                    min={1}
-                    max={5}
-                    value={importance}
-                    onChange={e => setImportance(Number(e.target.value))}
-                    className="border p-2 rounded"
-                    placeholder="Важливість (1-5)"
-                />
-                <input
-                    type="number"
-                    min={1}
-                    max={5}
-                    value={urgency}
-                    onChange={e => setUrgency(Number(e.target.value))}
-                    className="border p-2 rounded"
-                    placeholder="Терміновість (1-5)"
-                />
+                <div>
+                    <label className="block text-sm text-gray-600 mb-1">Важливість</label>
+                    <input
+                        type="number"
+                        min={1}
+                        max={5}
+                        value={importance}
+                        onChange={(e) => setImportance(Number(e.target.value))}
+                        className="w-full rounded-lg border p-2 focus:ring-2 focus:ring-blue-500"
+                    />
+                </div>
+                <div>
+                    <label className="block text-sm text-gray-600 mb-1">Терміновість</label>
+                    <input
+                        type="number"
+                        min={1}
+                        max={5}
+                        value={urgency}
+                        onChange={(e) => setUrgency(Number(e.target.value))}
+                        className="w-full rounded-lg border p-2 focus:ring-2 focus:ring-blue-500"
+                    />
+                </div>
             </div>
 
 

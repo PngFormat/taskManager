@@ -32,11 +32,10 @@ export default function TaskItem({
         <div
             ref={innerRef}
             {...dragProps}
-            className={`p-3 rounded border shadow-sm flex justify-between items-center 
+            className={`p-3 rounded border shadow-sm relative 
         ${task.completed ? "bg-green-100 line-through text-gray-500" : "bg-white"} 
         ${disabled && !isFocused ? "opacity-50 cursor-not-allowed" : ""}`}
         >
-            {/* Ліва частина (текст, пріоритет, дедлайн) */}
             <div
                 className={`flex-1 ${disabled ? "pointer-events-none" : "cursor-pointer"}`}
                 onClick={() => !(disabled && !isFocused) && onToggle(task._id)}
@@ -83,7 +82,10 @@ export default function TaskItem({
                     ) : (
                         <>
               <span className="text-sm text-gray-500">
-                📅 {task.dueDate ? new Date(task.dueDate).toLocaleDateString() : "немає"}
+                📅{" "}
+                  {task.dueDate
+                      ? new Date(task.dueDate).toLocaleDateString()
+                      : "немає"}
               </span>
                             <button
                                 onClick={(e) => {
@@ -99,8 +101,7 @@ export default function TaskItem({
                 </div>
             </div>
 
-            {/* Права частина (кнопки дій) */}
-            <div className="flex items-center space-x-2 ml-3">
+            <div className="absolute top-2 right-2 flex space-x-2">
                 {!isFocused && !disabled && (
                     <button
                         onClick={onFocusSelect}

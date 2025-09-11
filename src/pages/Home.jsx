@@ -14,6 +14,7 @@ export default function Home({
     const [filterPriority, setFilterPriority] = useState("");
     const [filterTag, setFilterTag] = useState("");
     const [taskList, setTaskList] = useState(tasks);
+    const [viewMode, setViewMode] = useState("list");
 
     useEffect(() => {
         setTaskList(tasks);
@@ -101,12 +102,24 @@ export default function Home({
                     ))}
                 </select>
             </div>
+
+            <div className="flex space-x-2">
+                <button
+                    onClick={() =>
+                    setViewMode((prev) => (prev === "list" ? "grid" : "list"))
+                    }
+                    className="ml-auto px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+                >
+                    {viewMode === "list" ? "🧱 Сетка" : "📋 Список"}
+                </button>
+            </div>
             <TaskList
                 tasks={filteredTasks}
                 onToggle={toggleTask}
                 onDelete={deleteTask}
                 onReorder={reorderTasks}
                 onUpdateDeadline={handleUpdateDeadline}
+                viewMode={viewMode}
             />
         </div>
     );
