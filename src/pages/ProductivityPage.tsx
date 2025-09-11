@@ -2,6 +2,7 @@ import ProductivityAnalytics from "../components/Analytics.tsx";
 import useTaskAssistant from "../hooks/useTaskAssistant.tsx";
 import {useState} from "react";
 
+
 export default function ProductivityPage({tasks}) {
     const [showProgress , setShowProgress] = useState(false);
     const { recommendations, progress} = useTaskAssistant(tasks)

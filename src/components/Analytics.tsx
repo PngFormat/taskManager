@@ -14,6 +14,7 @@ import {
 } from "recharts";
 import TopProductiveDays from "./TopProductiveDays.tsx";
 import {useState} from "react";
+import KeyMetrics from "./KeyMetrics.tsx";
 
 
 const COLORS = ["#8884d8", "#82ca9d", "#ffc658", "#ff7f50", "#ff6f91", "#00c49f", "#ffbb28"];
@@ -224,6 +225,9 @@ export default function ProductivityAnalytics({ tasks }) {
                 <div className="mt-10">
                     <TopProductiveDays tasks={tasks} />
                 </div>
+
+                <KeyMetrics tasks={tasks} period={period} />
+
 
 
             </div>
