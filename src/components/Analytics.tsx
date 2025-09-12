@@ -15,12 +15,15 @@ import {
 import TopProductiveDays from "./TopProductiveDays.tsx";
 import {useState} from "react";
 import KeyMetrics from "./KeyMetrics.tsx";
+import useFocusStats from "../hooks/useFocusStats.tsx";
+import FocusStatsCard from "./FocusStatsCard.tsx";
 
 
 const COLORS = ["#8884d8", "#82ca9d", "#ffc658", "#ff7f50", "#ff6f91", "#00c49f", "#ffbb28"];
 
 export default function ProductivityAnalytics({ tasks }) {
     const [period, setPeriod] = useState<"day" | "week" | "month">("week");
+    const {sessions, totalTime, avgSession } = useFocusStats();
 
     const now = new Date();
     const filteredTasks = tasks.filter(task => {
@@ -227,6 +230,8 @@ export default function ProductivityAnalytics({ tasks }) {
                 </div>
 
                 <KeyMetrics tasks={tasks} period={period} />
+
+               <FocusStatsCard sessions={sessions} totalTime={totalTime} avgSession={avgSession}/>
 
 
 

@@ -1,19 +1,29 @@
 import { useState, useEffect } from "react";
 import TaskList from "../components/TaskList";
 import PomodoroTimer from "../components/PomodoroTimer.tsx";
+import useFocusStats from "../hooks/useFocusStats.tsx";
 
 export default function FocusMode({ tasks, setTasks, toggleTask, deleteTask, updateTask }) {
     const [isFocusActive, setIsFocusActive] = useState(false);
     const [focusedTaskId, setFocusedTaskId] = useState<string | null>(null);
+    const {sessions, addSession , totalTime, avgSession} = useFocusStats();
+    const [startTime, setStartTime] = useState<number | null>(null);
 
     const startFocus = (taskId: string) => {
         setFocusedTaskId(taskId);
         setIsFocusActive(true);
+        setStartTime(Date.now());
     };
 
     const stopFocus = () => {
+        if (focusedTaskId && startTime) {
+            const duration = Date.now() - startTime
+            addSession(duration);
+        }
         setIsFocusActive(false);
         setFocusedTaskId(null);
+        setStartTime(null);
+
     }
 
     const completeTask = async (taskId: string) => {
@@ -44,6 +54,12 @@ export default function FocusMode({ tasks, setTasks, toggleTask, deleteTask, upd
                     onCompleteTask={completeTask}
                 />
             )}
+            <div className="mt-4">
+                <p>⏱ Всего времени в фокусе: {(totalTime / 60000).toFixed(1)} хв</p>
+                <p>📊 Средняя сессия: {(avgSession / 60000).toFixed(1)} хв</p>
+                <p>🔄 Количество сессий: {sessions.length}</p>
+
+            </div>
 
             {isFocusActive && (
                 <p className="text-center text-red-600 font-semibold">
