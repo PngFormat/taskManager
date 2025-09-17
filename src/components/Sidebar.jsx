@@ -19,6 +19,8 @@ const Sidebar = () => {
                 <NavLink to="/notes" className={linkClass}>📝 Нотатки</NavLink>
                 <NavLink to="/export-import" className={linkClass}>💾 Экспорт/Импорт</NavLink>
                 <NavLink to="/research" className={linkClass}>💾 Порівняння</NavLink>
+                <NavLink to="/knowledge" className={linkClass}>📚 База знань</NavLink>
+
 
             </nav>
         </div>
