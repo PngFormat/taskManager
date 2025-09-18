@@ -7,7 +7,10 @@ export default function Settings({ maxTasksPerDay, setMaxTasksPerDay }) {
     const [notifications, setNotifications] = useState(true);
     const [language, setLanguage] = useState("ua");
     const [localMaxTasks, setLocalMaxTasks] = useState(maxTasksPerDay);
-    const [city, setCity] = useState("Київ");
+    const [city, setCity] = useState(() => {
+        return localStorage.getItem("city") || "Київ";
+    });
+
 
     const handleReset = () => {
         // eslint-disable-next-line no-restricted-globals
@@ -20,7 +23,7 @@ export default function Settings({ maxTasksPerDay, setMaxTasksPerDay }) {
     const handleSave = () => {
         setMaxTasksPerDay(localMaxTasks);
         localStorage.setItem("maxTasksPerDay", localMaxTasks.toString());
-        localStorage.setItem("city,", city);
+        setCity(localStorage.getItem("city"))
         alert("Налаштування збережено!");
     };
 

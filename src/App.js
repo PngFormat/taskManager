@@ -15,6 +15,7 @@ import ExportImportPage from "./pages/ExportImportPage.tsx";
 import ResearchPage from "./pages/ResearchPage.tsx";
 import {AnimatePresence, motion} from "framer-motion";
 import PageWrapper from "./components/motion/PageWrapper.tsx";
+import KnowledgeBase from "./pages/KnowledgeBasePage.tsx";
 
 function App() {
     const [tasks, setTasks] = useState([]);
@@ -235,6 +236,15 @@ function App() {
                         />
                     </PageWrapper>}
                 />
+
+                    <Route
+                        path="knowledge"
+                        element={
+                            <PageWrapper>
+                                <KnowledgeBase
+                                />
+                            </PageWrapper>}
+                    />
 
             </Routes>
             </AnimatePresence>
