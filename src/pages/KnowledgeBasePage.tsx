@@ -1,5 +1,6 @@
-import {useEffect, useState} from "react";
+import {useEffect, useMemo, useState} from "react";
 import Sidebar from "../components/Sidebar";
+import Stats from "../components/ResourceStats.tsx";
 
 export default function KnowledgeBase() {
     const [resources, setResources] = useState([]);
@@ -7,6 +8,7 @@ export default function KnowledgeBase() {
     const [url, setUrl] = useState("");
     const [type, setType] = useState("link");
     const [tags, setTags] = useState("");
+    const [filterTag, setFilterTag] = useState(null);
 
     useEffect(() => {
         const saved = localStorage.getItem("resources");
@@ -36,11 +38,40 @@ export default function KnowledgeBase() {
         localStorage.setItem("resources", JSON.stringify(updated));
     };
 
+    const stats = useMemo(() => {
+        const counts = resources.reduce((acc, r) => {
+            acc[r.type] = (acc[r.type] || 0) + 1;
+            return acc;
+        }, {});
+        return { total: resources.length, counts };
+    }, [resources]);
+
+    const allTags = useMemo(() => {
+        const tagMap = {};
+        resources.forEach(r =>
+            r.tags.forEach(tag => {
+                tagMap[tag] = (tagMap[tag] || 0) + 1;
+            })
+        );
+        return tagMap;
+    }, [resources]);
+
+    const filteredResources = filterTag
+        ? resources.filter(r => r.tags.includes(filterTag))
+        : resources;
+
     return (
         <div className="flex">
             <Sidebar/>
             <div className="flex-1 p-6">
                 <h2 className="text-2xl font-bold mb-4">📚 База знань</h2>
+                <Stats
+                    stats={stats}
+                    allTags={allTags}
+                    filterTag={filterTag}
+                    setFilterTag={setFilterTag}
+                />
+
 
 
                 <div className="space-y-2 mb-6">
@@ -69,7 +100,7 @@ export default function KnowledgeBase() {
                         onChange={(e) => setTags(e.target.value)}
                     />
                     <button
-                        onChange={addResources}
+                        onClick={addResources}
                         className="bg-blue-500 text-white px-4 py-2 rounded"
                     >
                         ➕ Додати
