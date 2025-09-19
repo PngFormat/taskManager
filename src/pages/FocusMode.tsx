@@ -44,31 +44,49 @@ export default function FocusMode({ tasks, setTasks, toggleTask, deleteTask, upd
     }
 
     return (
-        <div className="max-w-xl mx-auto py-10">
-            <h1 className="text-2xl font-bold mb-6">🧘‍♀️ Режим фокуса</h1>
+        <div className="max-w-xl mx-auto py-10 px-6">
+            <h1 className="text-3xl font-extrabold mb-8 text-center bg-gradient-to-r from-indigo-500 to-pink-500 text-transparent bg-clip-text">🧘‍♀️ Режим фокуса</h1>
 
             {focusedTaskId && (
-                <PomodoroTimer
-                    task={tasks.find(t => t._id === focusedTaskId)}
-                    onStop={stopFocus}
-                    onCompleteTask={completeTask}
-                />
+                <div className="mb-8">
+                    <PomodoroTimer
+                        task={tasks.find(t => t._id === focusedTaskId)}
+                        onStop={stopFocus}
+                        onCompleteTask={completeTask}
+                    />
+                </div>
             )}
-            <div className="mt-4">
-                <p>⏱ Всего времени в фокусе: {(totalTime / 60000).toFixed(1)} хв</p>
-                <p>📊 Средняя сессия: {(avgSession / 60000).toFixed(1)} хв</p>
-                <p>🔄 Количество сессий: {sessions.length}</p>
+            <div className="grid grid-cols-3 gap-4 text-center mb-8">
+                <div className="p-4 rounded-2xl bg-gradient-to-r from-indigo-500/10 to-indigo-500/20 shadow-md">
+                    <p className="text-lg font-semibold text-indigo-600">
+                         {(totalTime / 60000).toFixed(1)} хв
+                    </p>
+                    <span className="text-sm text-gray-600">Всього у фокусі</span>
+                </div>
 
+                <div className="p-4 rounded-2xl bg-gradient-to-r from-green-500/10 to-green-500/20 shadow-md">
+                    <p className="text-lg font-semibold text-green-600">
+                        {(avgSession / 60000).toFixed(1)} хв
+                    </p>
+                    <span className="text-sm text-gray-600">Средняя сессия</span>
+                </div>
+
+                <div className="p-4 rounded-2xl bg-gradient-to-r from-pink-500/10 to-pink-500/20 shadow-md">
+                    <p className="text-lg font-semibold text-pink-600">{sessions.length}</p>
+                    <span className="text-sm text-gray-600">Сессий</span>
+                </div>
             </div>
 
             {isFocusActive && (
-                <p className="text-center text-red-600 font-semibold">
+                <p className="text-center text-red-600 font-semibold mb-6">
                     🚫 Доступна только задача в фокусе.
                 </p>
             )}
 
 
-            <div className={`${isFocusActive ? "opacity-50 pointer-events-none" : ""}`}>
+            <div className={`transition-all duration-500 ${
+                isFocusActive ? "opacity-40 blur-sm pointer-events-none" : ""
+            }`}>
                 <TaskList
                     tasks={tasks}
                     onToggle={toggleTask}
