@@ -115,7 +115,9 @@ export default function ProductivityAnalytics({ tasks }) {
                         key={p}
                         onClick={() => setPeriod(p as "day" | "week" | "month")}
                         className={`px-4 py-2 rounded ${
-                            period === p ? "bg-blue-600 text-white" : "bg-gray-200"
+                            period === p ? 
+                                "bg-blue-600 text-white dark:text-gray-200" 
+                                : "bg-gray-200 dark:bg-gray-700 dark:text-gray-200"
                         }`}
                     >
                         {p === "day" ? "День" : p === "week" ? "Тиждень" : "Місяць"}

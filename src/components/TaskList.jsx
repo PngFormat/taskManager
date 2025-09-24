@@ -56,40 +56,40 @@ export default function TaskList({
                             const isFocused = task._id === focusedTaskId;
                             const isDisabled = disabled && !isFocused
 
-                                return (
-                                    <Draggable
-                                        key={task._id}
-                                        draggableId={String(task._id)}
-                                        index={index}
-                                        isDragDisabled={isDisabled}
-                                    >
-                                        {(provided, snapshot) => (
-                                            <div
-                                                ref={provided.innerRef}
-                                                {...provided.draggableProps}
-                                                {...provided.dragHandleProps}
-                                                className={`rounded p-1 transition ${
-                                                    snapshot.isDragging
-                                                        ? "bg-gray-200"
-                                                        : isFocused
-                                                            ? "bg-yellow-100 border-2 border-yellow-500"
-                                                            : ""
-                                                } ${isDisabled ? "opacity-50 pointer-events-none" : ""}`}
-                                                style={getItemStyle(provided.draggableProps.style, viewMode === "grid")}
-                                            >
-                                                <TaskItem
-                                                    task={task}
-                                                    onToggle={() => onToggle(task._id)}
-                                                    onDelete={() => onDelete(task._id)}
-                                                    onUpdateDeadline={onUpdateDeadline}
-                                                    disabled={disabled && task._id !== focusedTaskId}
-                                                    onFocusSelect={() => onFocusSelect(task._id)}
-                                                    isFocused={task._id === focusedTaskId}
-                                                />
-                                            </div>
-                                        )}
-                                    </Draggable>
-                                )
+                            return (
+                                <Draggable
+                                    key={task._id}
+                                    draggableId={String(task._id)}
+                                    index={index}
+                                    isDragDisabled={isDisabled}
+                                >
+                                    {(provided, snapshot) => (
+                                        <div
+                                            ref={provided.innerRef}
+                                            {...provided.draggableProps}
+                                            {...provided.dragHandleProps}
+                                            className={`rounded p-1 transition ${
+                                                snapshot.isDragging
+                                                    ? "bg-gray-200"
+                                                    : isFocused
+                                                        ? "bg-yellow-100 border-2 border-yellow-500"
+                                                        : ""
+                                            } ${isDisabled ? "opacity-50 pointer-events-none" : ""}`}
+                                            style={getItemStyle(provided.draggableProps.style, viewMode === "grid")}
+                                        >
+                                            <TaskItem
+                                                task={task}
+                                                onToggle={() => onToggle(task._id)}
+                                                onDelete={() => onDelete(task._id)}
+                                                onUpdateDeadline={onUpdateDeadline}
+                                                disabled={disabled && task._id !== focusedTaskId}
+                                                onFocusSelect={() => onFocusSelect(task._id)}
+                                                isFocused={task._id === focusedTaskId}
+                                            />
+                                        </div>
+                                    )}
+                                </Draggable>
+                            )
                         })}
                         {provided.placeholder}
                     </div>
