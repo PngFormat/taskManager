@@ -27,6 +27,18 @@ export default function Settings({ maxTasksPerDay, setMaxTasksPerDay }) {
         alert("Налаштування збережено!");
     };
 
+    const toggleDarkMode = () => {
+        const overlay = document.createElement("div");
+        overlay.className = "theme-transition";
+        document.body.appendChild(overlay);
+
+        setDarkMode(!darkMode);
+
+        setTimeout(() => {
+            document.body.removeChild(overlay);
+        }, 800); // столько же, сколько длится animation
+    };
+
     useEffect(() => {
         const saveLimit = localStorage.getItem("maxTasksPerDay");
         if (saveLimit) setMaxTasksPerDay(Number(saveLimit))
@@ -35,6 +47,24 @@ export default function Settings({ maxTasksPerDay, setMaxTasksPerDay }) {
     useEffect(() => {
         localStorage.setItem("maxTasksPerDay", maxTasksPerDay.toString());
     },[maxTasksPerDay]);
+
+    useEffect(() => {
+        const savedTheme = localStorage.getItem("darkMode");
+        if (savedTheme === "true") {
+            setDarkMode(true);
+        }
+    }, []);
+
+    useEffect(() => {
+        localStorage.setItem("darkMode", String(darkMode));
+        if (darkMode) {
+            document.documentElement.classList.add("dark");
+        } else {
+            document.documentElement.classList.remove("dark");
+        }
+    }, [darkMode]);
+
+
 
     return (
         <div className="max-w-2xl mx-auto py-10 px-4 space-y-6">
@@ -89,8 +119,8 @@ export default function Settings({ maxTasksPerDay, setMaxTasksPerDay }) {
                 <span>🌙 Темна тема</span>
                 <input
                     type="checkbox"
-                    value={darkMode}
-                    onChange={() => setDarkMode(!darkMode)}
+                    checked={darkMode}
+                    onChange={toggleDarkMode}
                     className="h-5 w-5"
                 />
             </div>

@@ -1,3 +1,50 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+html, body {
+    @apply bg-white text-gray-900 transition-colors duration-700;
+}
+
+.dark {
+    @apply bg-gray-900 text-gray-100;
+}
+@keyframes sweep {
+    0% {
+        clip-path: inset(0 100% 0 0);
+    }
+    50% {
+        clip-path: inset(0 0 0 0);
+    }
+    100% {
+        clip-path: inset(0 0 0 100%);
+    }
+}
+
+.theme-transition {
+    position: fixed;
+    inset: 0;
+    background: #111827;
+    z-index: 9999;
+    animation: sweep 0.8s ease-in-out forwards;
+    pointer-events: none;
+}
+
+@layer base {
+    body {
+        @apply text-gray-900 dark:text-gray-200 bg-white dark:bg-black
+    }
+}
+@layer base {
+    th {
+        @apply px-4 py-2 border text-black dark:text-black
+    }
+}
+
+@layer base {
+    p {
+        @apply px-4 py-2 border text-black dark:text-gray-700;
+    }
+}
+
+
