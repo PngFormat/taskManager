@@ -45,23 +45,27 @@ export default function TaskItem({
                 onClick={() => !(disabled && !isFocused) && onToggle(task._id)}
             >
                 <div className="flex items-center justify-between">
-                    <h3
-                        className={`font-semibold text-base ${
-                            task.completed ? "line-through" : ""
-                        }`}
+                    <div
+                        className="flex items-center gap-2"
                     >
-                        {task.title}
-                    </h3>
+                        <h3
+                            className={`font-semibold text-base ${
+                                task.completed ? "line-through" : ""
+                            }`}
+                        >
+                            {task.title}
+                        </h3>
 
-                    <span
-                        className={`px-2 py-0.5 rounded-full text-xs font-medium ${priorityStyles[task.priority]}`}
-                    >
-                        {task.priority === "high"
-                            ? "🔥 Високий"
-                            : task.priority === "medium"
-                                ? "⚡ Середній"
-                                : "✅ Низький"}
-                    </span>
+                        <span
+                            className={`px-2 py-0.5 rounded-full text-xs font-medium ${priorityStyles[task.priority]}`}
+                        >
+                            {task.priority === "high"
+                                ? "🔥 Високий"
+                                : task.priority === "medium"
+                                    ? "⚡ Середній"
+                                    : "✅ Низький"}
+                        </span>
+                    </div>
                 </div>
 
                 <div className="flex items-center gap-2 text-sm">
@@ -116,7 +120,7 @@ export default function TaskItem({
             </div>
 
 
-            <div className="absolute top-2 right-2 flex gap-2">
+            <div className="absolute right-2 top-1/2 -translate-y-1/2 flex flex-col gap-2">
                 {!isFocused && !disabled && (
                     <button
                         onClick={onFocusSelect}

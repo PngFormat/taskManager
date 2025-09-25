@@ -1,6 +1,8 @@
 import { useState } from "react";
 import {TASK_TEMPLATES} from "../utils/templates";
 import {parseQuickTask} from "../utils/quickParse.ts";
+import InputField from "../components/InputField.tsx"
+import SelectField from "./SelectField.tsx";
 
 export default function TaskForm({ onAdd }) {
     const [title, setTitle] = useState("");
@@ -91,51 +93,43 @@ export default function TaskForm({ onAdd }) {
             </div>
 
             <div>
-                <label className="block text-sm text-gray-600 mb-1">Назва</label>
-                <input
-                    type="text"
-                    placeholder="Наприклад: зробити звіт"
+                <InputField
+                    label="Назва"
                     value={title}
-                    onChange={e => setTitle(e.target.value)}
-                    className={`w-full border p-2 rounded-lg border p-2 focus:ring-2 focus:ring-blue-500  ${
-                        submitted && !title.trim() ? "border-red-500 bg-red-50" : ""
-                    }`}
+                    onChange={(e) => setTitle(e.target.value)}
+                    placeholder="Наприклад: зробити звіт"
+                    error={submitted && !title.trim()}
                 />
             </div>
 
             <div>
-                <label className="block text-sm text-gray-600 mb-1">Дедлайн</label>
-                <input
+                <InputField
+                    label="Дедлайн"
                     type="date"
                     value={dueDate}
-                    onChange={e => setDueDate(e.target.value)}
-                    className={`w-full border p-2 rounded-lg border p-2 focus:ring-2 focus:ring-blue-500  ${
-                        submitted && !title.trim() ? "border-red-500 bg-red-50" : ""
-                    }`}
+                    onChange={(e) => setDueDate(e.target.value)}
+                    error={submitted && !title.trim()}
                 />
             </div>
 
-            <div>
-                <label className="block text-sm text-gray-600 mb-1">Пріоритет</label>
-                <select
-                    value={priority}
-                    onChange={e => setPriority(e.target.value)}
-                    className="w-full border-gray-300 rounded-lg p-2 focus:ring-2 focus:ring-blue-500"
-                >
-                    <option value="high">🔴 Високий</option>
-                    <option value="medium">🟡 Середній</option>
-                    <option value="low">🟢 Низький</option>
-                </select>
-            </div>
+            <SelectField
+                label="Пріоритет"
+                value={priority}
+                onChange={setPriority}
+                options={[
+                    { value: "high", label: "🔴 Високий" },
+                    { value: "medium", label: "🟡 Середній" },
+                    { value: "low", label: "🟢 Низький" },
+                ]}
+            />
 
             <div>
-                <label className="block text-sm text-gray-600 mb-1">Теги</label>
-                <input
-                    type="text"
-                    placeholder="робота,навчання"
+                <InputField
+                    label="Теги"
                     value={tagsInput}
-                    onChange={e => setTagsInput(e.target.value)}
-                    className="w-full border-gray-300 rounded-lg p-2 focus:ring-2 focus:ring-blue-500"
+                    onChange={(e) => setTagsInput(e.target.value)}
+                    placeholder="робота,навчання"
+                    error={submitted && !title.trim()}
                 />
             </div>
 
