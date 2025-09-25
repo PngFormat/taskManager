@@ -43,7 +43,7 @@ html, body {
 
 @layer base {
     p {
-        @apply px-4 py-2 border text-black dark:text-gray-700;
+        @apply px-4 py-2 text-black dark:text-gray-700;
     }
 }
 
