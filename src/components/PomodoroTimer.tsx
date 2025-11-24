@@ -33,7 +33,6 @@ export default function PomodoroTimer({ task, onStop, onCompleteTask }) {
         if (mode === "shortBreak") setSeconds(settings.shortBreak * 60);
         if (mode === "longBreak") setSeconds(settings.longBreak * 60);
     }, [settings, mode]);
-
     const getModeTime = (m) => {
         if (m === "focus") return settings.focus * 60;
         if (m === "shortBreak") return settings.shortBreak * 60;

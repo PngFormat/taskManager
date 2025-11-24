@@ -77,8 +77,9 @@ export default function Home({
             </div>
             <h1 className="text-3xl font-bold mb-6 text-center">🧠 Мій планувальник</h1>
             <TaskForm onAdd={addTask} />
-            <div className="flex space-x-4 mb-4">
-                <select
+            <div className="flex mt-6 space-x-4 mb-4">
+
+            <select
                     value={filterPriority}
                     onChange={(e) => setFilterPriority(e.target.value)}
                     className="border p-2 rounded"
