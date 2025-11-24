@@ -106,18 +106,20 @@ export default function ProductivityAnalytics({ tasks }) {
 
 
     return (
-        <div className="mt-10">
-            <h2 className="text-xl font-semibold mb-4">📊 Аналитика продуктивности</h2>
+        <div className="mt-10 space-y-10">
 
-            <div className="flex justify-center gap-4 mb-6">
-                {["day", "week", "month"].map(p  => (
+            <h2 className="text-2xl font-bold mb-4">📊 Аналітика продуктивності</h2>
+
+            <div className="flex justify-center gap-4">
+                {["day", "week", "month"].map(p => (
                     <button
                         key={p}
-                        onClick={() => setPeriod(p as "day" | "week" | "month")}
-                        className={`px-4 py-2 rounded ${
-                            period === p ? 
-                                "bg-blue-600 text-white dark:text-gray-200" 
-                                : "bg-gray-200 dark:bg-gray-700 dark:text-gray-200"
+                        onClick={() => setPeriod(p)}
+                        className={`px-4 py-2 rounded-lg shadow 
+                        transition-all 
+                        ${period === p
+                            ? "bg-blue-600 text-white dark:text-gray-200"
+                            : "bg-gray-200 dark:bg-gray-700 dark:text-gray-200"
                         }`}
                     >
                         {p === "day" ? "День" : p === "week" ? "Тиждень" : "Місяць"}
@@ -125,8 +127,16 @@ export default function ProductivityAnalytics({ tasks }) {
                 ))}
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div className="h-64">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <KeyMetrics tasks={tasks} period={period} />
+                <FocusStatsCard sessions={sessions} totalTime={totalTime} avgSession={avgSession} />
+                <TopProductiveDays tasks={tasks} />
+            </div>
+
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+
+                <div className="bg-white dark:bg-gray-800 rounded-2xl shadow p-4 h-72">
+                    <h3 className="text-lg font-semibold mb-2">Завдання по дням</h3>
                     <ResponsiveContainer width="100%" height="100%">
                         <BarChart data={barData}>
                             <XAxis dataKey="name" />
@@ -138,7 +148,8 @@ export default function ProductivityAnalytics({ tasks }) {
                     </ResponsiveContainer>
                 </div>
 
-                <div className="h-64">
+                <div className="bg-white dark:bg-gray-800 rounded-2xl shadow p-4 h-72">
+                    <h3 className="text-lg font-semibold mb-2">Розподіл за пріоритетами</h3>
                     <ResponsiveContainer width="100%" height="100%">
                         <PieChart>
                             <Pie
@@ -146,12 +157,11 @@ export default function ProductivityAnalytics({ tasks }) {
                                 cx="50%"
                                 cy="50%"
                                 outerRadius={80}
-                                fill="#8884d8"
                                 dataKey="value"
                                 label
                             >
-                                {pieData.map((entry, index) => (
-                                    <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                                {pieData.map((entry, i) => (
+                                    <Cell key={i} fill={COLORS[i % COLORS.length]} />
                                 ))}
                             </Pie>
                             <Tooltip />
@@ -159,8 +169,8 @@ export default function ProductivityAnalytics({ tasks }) {
                     </ResponsiveContainer>
                 </div>
 
-
-                <div className="h-64">
+                <div className="bg-white dark:bg-gray-800 rounded-2xl shadow p-4 h-72">
+                    <h3 className="text-lg font-semibold mb-2">Статус завдань</h3>
                     <ResponsiveContainer width="100%" height="100%">
                         <PieChart>
                             <Pie
@@ -173,8 +183,8 @@ export default function ProductivityAnalytics({ tasks }) {
                                 dataKey="value"
                                 label
                             >
-                                {statusData.map((entry, index) => (
-                                    <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                                {statusData.map((entry, i) => (
+                                    <Cell key={i} fill={COLORS[i % COLORS.length]} />
                                 ))}
                             </Pie>
                             <Tooltip />
@@ -183,61 +193,57 @@ export default function ProductivityAnalytics({ tasks }) {
                     </ResponsiveContainer>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-10">
-                    <div className="h-64">
-                        <ResponsiveContainer width="100%" height="100%">
-                            <BarChart data={hoursChart}>
-                                <XAxis dataKey="hour" />
-                                <YAxis />
-                                <Tooltip />
-                                <Legend />
-                                <Bar dataKey="tasks" fill="#82ca9d" />
-                            </BarChart>
-                        </ResponsiveContainer>
-                    </div>
+                <div className="bg-white dark:bg-gray-800 rounded-2xl shadow p-4 h-72">
+                    <h3 className="text-lg font-semibold mb-2">Активність за годинами</h3>
+                    <ResponsiveContainer width="100%" height="100%">
+                        <BarChart data={hoursChart}>
+                            <XAxis dataKey="hour" />
+                            <YAxis />
+                            <Tooltip />
+                            <Legend />
+                            <Bar dataKey="tasks" fill="#82ca9d" />
+                        </BarChart>
+                    </ResponsiveContainer>
+                </div>
 
-
-                    <div className="h-64">
-                        <ResponsiveContainer width="100%" height="100%">
-                            <LineChart data={weeklyChart}>
-                                <XAxis dataKey="week" />
-                                <YAxis />
-                                <Tooltip />
-                                <Legend />
-                                <Line type='monotone' dataKey="tasks" stroke='#ff6f91' />
-                            </LineChart>
-                        </ResponsiveContainer>
-                    </div>
+                <div className="bg-white dark:bg-gray-800 rounded-2xl shadow p-4 h-72">
+                    <h3 className="text-lg font-semibold mb-2">Динаміка по тижнях</h3>
+                    <ResponsiveContainer width="100%" height="100%">
+                        <LineChart data={weeklyChart}>
+                            <XAxis dataKey="week" />
+                            <YAxis />
+                            <Tooltip />
+                            <Legend />
+                            <Line type='monotone' dataKey="tasks" stroke='#ff6f91' />
+                        </LineChart>
+                    </ResponsiveContainer>
                 </div>
 
                 {categoryChart.length > 0 && (
-                    <div className="h-64 mt-10">
+                    <div className="bg-white dark:bg-gray-800 rounded-2xl shadow p-4 h-72 lg:col-span-2">
+                        <h3 className="text-lg font-semibold mb-2">Категорії завдань</h3>
                         <ResponsiveContainer width="100%" height="100%">
                             <PieChart>
-                                <Pie data={categoryChart} cx="50%" cy="50%" outerRadius={80} dataKey="value" label>
-
-                                {categoryChart.map((entry, index) => (
-                                        <Cell key={index} fill={COLORS[index % COLORS.length]}/>
+                                <Pie
+                                    data={categoryChart}
+                                    cx="50%"
+                                    cy="50%"
+                                    outerRadius={90}
+                                    dataKey="value"
+                                    label
+                                >
+                                    {categoryChart.map((entry, i) => (
+                                        <Cell key={i} fill={COLORS[i % COLORS.length]} />
                                     ))}
                                 </Pie>
-                                <Tooltip/>
-                                <Legend/>
+                                <Tooltip />
+                                <Legend />
                             </PieChart>
                         </ResponsiveContainer>
                     </div>
                 )}
-
-                <div className="mt-10">
-                    <TopProductiveDays tasks={tasks} />
-                </div>
-
-                <KeyMetrics tasks={tasks} period={period} />
-
-               <FocusStatsCard sessions={sessions} totalTime={totalTime} avgSession={avgSession}/>
-
-
-
             </div>
         </div>
     );
+
 }
