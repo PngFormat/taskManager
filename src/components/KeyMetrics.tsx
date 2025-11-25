@@ -88,7 +88,7 @@ export default function KeyMetrics({ tasks, period }: KeyMetricsProps ) {
         : 0;
 
     return (
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 my-6">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-2 my-6">
             <div className="p-4 bg-blue-100 rounded-2xl shadow-md text-center flex flex-col justify-center items-center">
                 <div className="text-lg font-bold">{completionRate}%</div>
                 <div className="text-sm text-gray-600">Completion Rate</div>
