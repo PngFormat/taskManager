@@ -17,7 +17,7 @@ export default function PomodoroControls({ start, pause, reset, interrupt, finis
                 Завершити задачу
             </button>
             <button onClick={onStop} className="px-3 py-1 bg-purple-600 text-white rounded">
-                Снять фокус
+                Зняти фокус
             </button>
         </div>
     );

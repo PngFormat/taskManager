@@ -46,14 +46,14 @@ const Tasks = () => {
                 onClick={() => setShowProgress(!showProgress)}
                 className="mb-4 px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600"
             >
-                {showProgress ? "Скрыть прогресс" : "Показать прогресс"}
+                {showProgress ? "Приховати прогрес" : "Показати прогрес"}
             </button>
 
             {showProgress && (
                 <div
                     className="mb-4 p-3 bg-green-100 border border-green-300 rounded"
                 >
-                    📈 Выполнено: <strong>{progress}%</strong> задач
+                    📈 Виконано: <strong>{progress}%</strong> задач
                 </div>
             )}
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">

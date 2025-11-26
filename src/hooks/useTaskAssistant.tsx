@@ -24,22 +24,22 @@ export default function useTaskAssistant (tasks) {
         const recommendations = [];
 
         if (overdue.length) {
-            recommendations.push(`⚠️ У вас ${overdue.length} просроченных задач. Начните с "${overdue[0].title}".`);
+            recommendations.push(`⚠️ У вас ${overdue.length} протермінованих задач. Почніть з "${overdue[0].title}".`);
         }
         if (highPriority.length) {
-            recommendations.push(`🔥 Совет: возьмитесь за задачу с высоким приоритетом ${highPriority[0].title}`)
+            recommendations.push(`🔥 Порада: візьміться за задачу з высоким пріорітетом ${highPriority[0].title}`)
         }
         if (soonDeadline) {
-            recommendations.push(`⏳ Рекомендую сделать "${soonDeadline.title}", срок — ${soonDeadline.dueDate}.`);
+            recommendations.push(`⏳ Раджу зробити "${soonDeadline.title}", термін — ${soonDeadline.dueDate}.`);
         }
 
 
         if (overloadDays > 0 ) {
-            recommendations.push(`🛑 В ${overloadDays} дн. слишком много задач.Подумайте о переносе части`)
+            recommendations.push(`🛑 У ${overloadDays} дн. дуже багато задач.Подумайте о перенесенні частини`)
         }
 
         if (!overdue.length && completionRate > 80) {
-            recommendations.push("🎉 Отличная работа! Держите темп.");
+            recommendations.push("🎉 Чудова робота! Тримайте темп.");
 
         }
 

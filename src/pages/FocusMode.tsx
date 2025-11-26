@@ -68,18 +68,18 @@ export default function FocusMode({ tasks, setTasks, toggleTask, deleteTask, upd
                     <p className="text-lg font-semibold text-green-600">
                         {(avgSession / 60000).toFixed(1)} хв
                     </p>
-                    <span className="text-sm text-gray-600">Средняя сессия</span>
+                    <span className="text-sm text-gray-600">Середня сесія</span>
                 </div>
 
                 <div className="p-4 rounded-2xl bg-gradient-to-r from-pink-500/10 to-pink-500/20 shadow-md">
                     <p className="text-lg font-semibold text-pink-600">{sessions.length}</p>
-                    <span className="text-sm text-gray-600">Сессий</span>
+                    <span className="text-sm text-gray-600">Сессій</span>
                 </div>
             </div>
 
             {isFocusActive && (
                 <p className="text-center text-red-600 font-semibold mb-6">
-                    🚫 Доступна только задача в фокусе.
+                    🚫 Доступне лише завдання у фокусі.
                 </p>
             )}
 

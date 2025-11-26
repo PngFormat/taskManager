@@ -1,7 +1,6 @@
 import TaskItem from "./TaskItem.tsx";
 import { DragDropContext, Droppable, Draggable } from "@hello-pangea/dnd";
 
-
 export default function TaskList({
                                      tasks,
                                      onToggle,
@@ -13,88 +12,156 @@ export default function TaskList({
                                      onUpdateDeadline,
                                      viewMode
                                  }) {
+    const active = tasks
+        .map((t, i) => ({ ...t, __idx: i }))
+        .filter(t => !t.completed);
+
+    const completed = tasks
+        .map((t, i) => ({ ...t, __idx: i }))
+        .filter(t => t.completed);
+
     const handleDragEnd = (result) => {
         if (!result.destination) return;
 
-        const items = Array.from(tasks);
-        const [reorderedItem] = items.splice(result.source.index, 1);
-        items.splice(result.destination.index, 0, reorderedItem);
+        const { source, destination } = result;
 
-        setTimeout(() => {
-            onReorder(items);
-        }, 0);
+        const reorder = (list, from, to) => {
+            const copy = Array.from(list);
+            const [moved] = copy.splice(from, 1);
+            copy.splice(to, 0, moved);
+            return copy;
+        };
+
+
+        if (source.droppableId === "active" && destination.droppableId === "active") {
+            const newActive = reorder(active, source.index, destination.index);
+            const newTasks = [...tasks];
+
+            const newOrdered = [
+                ...newActive.map(i => tasks[i.__idx]),
+                ...completed.map(i => tasks[i.__idx])
+            ];
+            onReorder(newOrdered);
+            return;
+        }
+
+        if (source.droppableId === "completed" && destination.droppableId === "completed") {
+            const newCompleted = reorder(completed, source.index, destination.index);
+            const newOrdered = [
+                ...active.map(i => tasks[i.__idx]),
+                ...newCompleted.map(i => tasks[i.__idx])
+            ];
+            onReorder(newOrdered);
+            return;
+        }
+
+
+        if (source.droppableId !== destination.droppableId) {
+            let sourceList = source.droppableId === "active" ? active : completed;
+            let destList = destination.droppableId === "active" ? active : completed;
+
+            const movedItem = sourceList[source.index];
+            if (!movedItem) return;
+
+            const newSource = Array.from(sourceList);
+            newSource.splice(source.index, 1);
+
+            const newDest = Array.from(destList);
+
+            const toggled = { ...movedItem };
+            toggled.completed = destination.droppableId === "completed";
+
+            newDest.splice(destination.index, 0, toggled);
+
+            let newActiveOrder, newCompletedOrder;
+
+            if (source.droppableId === "active" && destination.droppableId === "completed") {
+                newActiveOrder = newSource.map(i => tasks[i.__idx]);
+                const before = completed.slice(0, destination.index).map(i => tasks[i.__idx]);
+                const after = completed.slice(destination.index).map(i => tasks[i.__idx]);
+                const toggledTaskObj = { ...tasks[movedItem.__idx], completed: true };
+                newCompletedOrder = [...before, toggledTaskObj, ...after];
+            } else {
+                const before = active.slice(0, destination.index).map(i => tasks[i.__idx]);
+                const after = active.slice(destination.index).map(i => tasks[i.__idx]);
+                const toggledTaskObj = { ...tasks[movedItem.__idx], completed: false };
+                newActiveOrder = [...before, toggledTaskObj, ...after];
+                newCompletedOrder = newSource.map(i => tasks[i.__idx]);
+            }
+
+            const newOrdered = [...newActiveOrder, ...newCompletedOrder];
+            onReorder(newOrdered);
+            return;
+        }
     };
 
     const getItemStyle = (style, isGrid) => {
-        if (! style) return {};
+        if (!style) return {};
         if (!isGrid) return style;
-
-        const {top, left, position, ...rest } = style;
+        const { top, left, position, ...rest } = style;
         return {
             ...rest,
             transform: style.transform,
         };
     };
 
-    return (
-        <DragDropContext onDragEnd={handleDragEnd}>
-            <Droppable droppableId="tasklist" direction={viewMode === "grid" ? "horizontal" : "vertical"}>
+    const renderList = (listArray, droppableId) => {
+        return (
+            <Droppable droppableId={droppableId} direction={viewMode === "grid" ? "horizontal" : "vertical"}>
                 {(provided) => (
                     <div
-                        {...provided.droppableProps}
                         ref={provided.innerRef}
-                        className={
-                            viewMode === "grid"
-                                ? "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4"
-                                : "space-y-2"
-                        }
-
-
+                        {...provided.droppableProps}
+                        className={droppableId === "active" ? "space-y-2" : "space-y-2"}
                     >
-
-                        {tasks.map((task, index) => {
-                            const isFocused = task._id === focusedTaskId;
-                            const isDisabled = disabled && !isFocused
-
+                        {listArray.map((item, index) => {
+                            const taskObj = tasks[item.__idx] || item; // safety
+                            const isFocused = taskObj._id === focusedTaskId;
+                            const isDisabled = disabled && !isFocused;
                             return (
-                                <Draggable
-                                    key={task._id}
-                                    draggableId={String(task._id)}
-                                    index={index}
-                                    isDragDisabled={isDisabled}
-                                >
+                                <Draggable key={taskObj._id} draggableId={String(taskObj._id)} index={index} isDragDisabled={isDisabled}>
                                     {(provided, snapshot) => (
                                         <div
                                             ref={provided.innerRef}
                                             {...provided.draggableProps}
                                             {...provided.dragHandleProps}
-                                            className={`rounded p-1 transition ${
-                                                snapshot.isDragging
-                                                    ? "bg-gray-200"
-                                                    : isFocused
-                                                        ? "bg-yellow-100 border-2 border-yellow-500"
-                                                        : ""
-                                            } ${isDisabled ? "opacity-50 pointer-events-none" : ""}`}
+                                            className={`rounded p-1 transition ${snapshot.isDragging ? "bg-gray-200" : isFocused ? "bg-yellow-100 border-2 border-yellow-500" : ""} ${isDisabled ? "opacity-50 pointer-events-none" : ""}`}
                                             style={getItemStyle(provided.draggableProps.style, viewMode === "grid")}
                                         >
                                             <TaskItem
-                                                task={task}
-                                                onToggle={() => onToggle(task._id)}
-                                                onDelete={() => onDelete(task._id)}
+                                                task={taskObj}
+                                                onToggle={() => onToggle(taskObj._id)}
+                                                onDelete={() => onDelete(taskObj._id)}
                                                 onUpdateDeadline={onUpdateDeadline}
-                                                disabled={disabled && task._id !== focusedTaskId}
-                                                onFocusSelect={() => onFocusSelect(task._id)}
-                                                isFocused={task._id === focusedTaskId}
+                                                disabled={disabled && taskObj._id !== focusedTaskId}
+                                                onFocusSelect={() => onFocusSelect(taskObj._id)}
+                                                isFocused={isFocused}
                                             />
                                         </div>
                                     )}
                                 </Draggable>
-                            )
+                            );
                         })}
                         {provided.placeholder}
                     </div>
                 )}
             </Droppable>
+        );
+    };
+
+    return (
+        <DragDropContext onDragEnd={handleDragEnd}>
+            <div className={viewMode === "grid" ? "grid grid-cols-1 gap-6 lg:grid-cols-2" : "space-y-6"}>
+                <div>
+                    <h4 className="text-sm font-semibold mb-2">Активні</h4>
+                    <div className="p-2 bg-transparent rounded">{renderList(active, "active")}</div>
+                </div>
+
+                <div>
+                    <h4 className="text-sm font-semibold mb-2">Виконані</h4>
+                    <div className="p-2 bg-transparent rounded">{renderList(completed, "completed")}</div>
+                </div>
+            </div>
         </DragDropContext>
     );
 }

@@ -73,7 +73,7 @@ export default function Home({
     return (
         <div className="max-w-3xl mx-auto py-10 px-4">
             <div className="mb-4 p-3 bg-yellow-100 border border-yellow-300 rounded">
-                🔮 Рекомендуемый день для новой задачи: <strong>{bestDay}</strong>
+                🔮 Рекомендований день для нової задачі: <strong>{bestDay}</strong>
             </div>
             <h1 className="text-3xl font-bold mb-6 text-center">🧠 Мій планувальник</h1>
             <TaskForm onAdd={addTask} />
@@ -84,10 +84,10 @@ export default function Home({
                     onChange={(e) => setFilterPriority(e.target.value)}
                     className="border p-2 rounded"
                 >
-                    <option value="">Все приоритеты</option>
-                    <option value="high">Высокий приоритет</option>
-                    <option value="medium">Средний приоритет</option>
-                    <option value="low">Низкий приоритет</option>
+                    <option value="">Усі пріорітети</option>
+                    <option value="high">Високий пріорітет</option>
+                    <option value="medium">Середеній пріорітет</option>
+                    <option value="low">Низький пріорітет</option>
                 </select>
 
                 <select
@@ -95,7 +95,7 @@ export default function Home({
                     onChange={(e) => setFilterTag(e.target.value)}
                     className="border p-2 rounded"
                 >
-                    <option value="">Все теги</option>
+                    <option value="">Усі теги</option>
                     {allTags.map((tag) => (
                         <option key={tag} value={tag}>
                             {tag}
@@ -115,7 +115,7 @@ export default function Home({
                 </button>
             </div>
             <TaskList
-                tasks={filteredTasks}
+                tasks={tasks}
                 onToggle={toggleTask}
                 onDelete={deleteTask}
                 onReorder={reorderTasks}
