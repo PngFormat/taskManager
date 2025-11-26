@@ -35,9 +35,9 @@ export default function WeatherAdvice() {
                 });
 
                 if (data.weather.toLowerCase().includes("rain")) {
-                    setAdvice("☔ Завтра дождь — займись домашними делами!");
+                    setAdvice("☔ Завтра дощ - займися домашніми справами!");
                 } else {
-                    setAdvice("🌤 Отличная погода — самое время для прогулки или спорта!");
+                    setAdvice("🌤 Чудова погода - саме час для прогулянки чи спорту!");
                 }
             } catch (err) {
                 console.error("Ошибка погоды:", err);

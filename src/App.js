@@ -216,26 +216,25 @@ function App() {
                         }
                     />
 
-                </Route>
+                    <Route
+                        path="export-import"
+                        element={
+                            <PageWrapper>
+                                <ExportImportPage
+                                    tasks={tasks}
+                                    setTasks={setTasks}
+                                />
+                            </PageWrapper>}
+                    />
 
-                <Route
-                    path="export-import"
-                    element={
-                    <PageWrapper>
-                        <ExportImportPage
-                            tasks={tasks}
-                            setTasks={setTasks}
-                        />
-                    </PageWrapper>}
-                />
-                <Route
-                    path="research"
-                    element={
-                    <PageWrapper>
-                        <ResearchPage
-                        />
-                    </PageWrapper>}
-                />
+                    <Route
+                        path="research"
+                        element={
+                            <PageWrapper>
+                                <ResearchPage
+                                />
+                            </PageWrapper>}
+                    />
 
                     <Route
                         path="knowledge"
@@ -246,6 +245,8 @@ function App() {
                             </PageWrapper>}
                     />
 
+
+                </Route>
             </Routes>
             </AnimatePresence>
         </BrowserRouter>
