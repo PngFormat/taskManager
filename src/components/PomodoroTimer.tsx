@@ -3,6 +3,7 @@ import {useMethodTracking} from "../hooks/useMethodTracking.tsx";
 import PomodoroProgress from "./PomodoroProgress.tsx";
 import PomodoroSettings from "./PomodoroSettings.tsx";
 import PomodoroControls from "./PomodoroControls.tsx";
+import useFocusPenalty from "../hooks/useFocusPenalty.tsx";
 
 export default function PomodoroTimer({ task, onStop, onCompleteTask }) {
 
@@ -26,6 +27,7 @@ export default function PomodoroTimer({ task, onStop, onCompleteTask }) {
     const [animate, setAnimate] = useState(false);
 
 
+
     useEffect(() => clearInterval(intervalRef.current), []);
 
     useEffect(() => {
@@ -33,12 +35,27 @@ export default function PomodoroTimer({ task, onStop, onCompleteTask }) {
         if (mode === "shortBreak") setSeconds(settings.shortBreak * 60);
         if (mode === "longBreak") setSeconds(settings.longBreak * 60);
     }, [settings, mode]);
+
+    useEffect(() => {
+        onSessionComplete(mode);
+    }, [mode]);
+
+
     const getModeTime = (m) => {
         if (m === "focus") return settings.focus * 60;
         if (m === "shortBreak") return settings.shortBreak * 60;
         if (m === "longBreak") return settings.longBreak * 60;
         return 0;
     };
+
+    const {
+        interruptions,
+        focusScore,
+        registerPause,
+        registerInterrupt,
+        registerReset,
+        onSessionComplete
+    } = useFocusPenalty(getModeTime)
 
     const start = () => {
         if (isRunning) return;
@@ -49,17 +66,21 @@ export default function PomodoroTimer({ task, onStop, onCompleteTask }) {
 
     const pause = () => {
         if (!isRunning) return;
+
+        registerPause(mode, seconds)
         setIsRunning(false);
         logEvent("pause");
     };
 
     const reset = () => {
+        registerReset(mode, seconds)
         setIsRunning(false);
         setSeconds(getModeTime(mode));
         logEvent("reset");
     };
 
     const interrupt = () => {
+        registerInterrupt(mode, seconds);
         setIsRunning(false);
         logEvent("interrupt");
     }
@@ -151,6 +172,9 @@ export default function PomodoroTimer({ task, onStop, onCompleteTask }) {
         <div
             className={`p-6 rounded-2xl shadow-lg flex flex-col items-center gap-4 transition-colors duration-700 ${bgColors[mode]}`}
         >
+            <div className="text-lg font-bold text-center text-gray-700">
+                Focus Score: <span className="text-blue-600">{focusScore}</span>
+            </div>
             <h2 className="text-lg font-bold text-center">
                 Задача: <span className="text-blue-600">{task?.title}</span>
                 <PomodoroSettings settings={settings} setSettings={setSettings} />
