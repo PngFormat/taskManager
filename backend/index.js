@@ -8,6 +8,7 @@ const { autoMoveUnfinishedTasks } = require("./utils/autoMoveUnfinishedTasks.js"
 const fetch = require("node-fetch");
 const notesRouter = require("./routes/notes")
 const ExperimentLog = require("./models/experimentLog")
+const focusStatsRouter = require("./routes/FocusStats")
 
 dotenv.config();
 
@@ -16,6 +17,7 @@ const router = express.Router();
 app.use(cors());
 app.use(express.json());
 app.use("/api/notes", notesRouter);
+app.use("/api/focus", focusStatsRouter);
 
 mongoose.connect(process.env.MONGO_URI)
     .then(() => console.log("✅ MongoDB подключена"))
@@ -165,6 +167,7 @@ app.get("/api/experiment/report", async (req, res) => {
         res.status(500).json({ error: "Failed to build report" });
     }
 });
+
 
 
 
