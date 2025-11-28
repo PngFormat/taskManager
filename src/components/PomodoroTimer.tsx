@@ -25,6 +25,7 @@ export default function PomodoroTimer({ task, onStop, onCompleteTask }) {
     const intervalRef = useRef(null);
     const { log } = useMethodTracking();
     const [animate, setAnimate] = useState(false);
+    const [saveRequested, setSaveRequested] = useState(false);
 
 
 
@@ -53,7 +54,8 @@ export default function PomodoroTimer({ task, onStop, onCompleteTask }) {
         registerPause,
         registerInterrupt,
         registerReset,
-        onSessionComplete
+        onSessionComplete,
+        getCurrentScore
     } = useFocusPenalty(getModeTime)
 
     useEffect(() => {
@@ -67,12 +69,13 @@ export default function PomodoroTimer({ task, onStop, onCompleteTask }) {
 
     };
 
-    const pause = () => {
+    const pause = async () => {
         if (!isRunning) return;
 
-        registerPause(mode, seconds)
+        registerPause(mode, seconds);
         setIsRunning(false);
         logEvent("pause");
+        setSaveRequested(true);
     };
 
     const reset = () => {
@@ -82,10 +85,12 @@ export default function PomodoroTimer({ task, onStop, onCompleteTask }) {
         logEvent("reset");
     };
 
-    const interrupt = () => {
+    const interrupt = async () => {
         registerInterrupt(mode, seconds);
         setIsRunning(false);
         logEvent("interrupt");
+        setSaveRequested(true);
+
     }
 
     useEffect(() => {
@@ -138,6 +143,8 @@ export default function PomodoroTimer({ task, onStop, onCompleteTask }) {
     };
 
     const saveFocusScore = async () => {
+        const { focusScore: score, interruptions: ints } = getCurrentScore();
+
         try {
             await fetch("http://localhost:5000/api/focus", {
                 method: "POST",
@@ -145,14 +152,15 @@ export default function PomodoroTimer({ task, onStop, onCompleteTask }) {
                 body: JSON.stringify({
                     taskId: task?._id,
                     mode,
-                    focusScore,
-                    interruptions
+                    focusScore: score,
+                    interruptions: ints
                 })
             });
         } catch (e) {
             console.error("Ошибка сохранения Focus Score:", e);
         }
     };
+
 
 
     const logEvent = (event: string, extraMode: string | null = null) => {
@@ -165,10 +173,12 @@ export default function PomodoroTimer({ task, onStop, onCompleteTask }) {
         });
     };
 
-    const finishTask = () => {
+    const finishTask = async () => {
         setIsRunning(false);
         clearInterval(intervalRef.current!);
         logEvent("complete", mode);
+
+        await saveFocusScore();
 
         if (onCompleteTask && task) {
             onCompleteTask(task._id);
@@ -200,8 +210,14 @@ export default function PomodoroTimer({ task, onStop, onCompleteTask }) {
         }
     }, [mode, isRunning, seconds]);
 
+    useEffect(() => {
+        if (!saveRequested) return;
 
-
+        (async () => {
+            await saveFocusScore();
+            setSaveRequested(false);
+        })();
+    }, [focusScore, interruptions, saveRequested]);
 
 
 

@@ -4,6 +4,13 @@ export default function useFocusPenalty(getModeTime) {
     const [interruptions, setInterruptions] = useState(0);
     const [focusScore, setFocusScore] = useState(100);
 
+    const getCurrentScore = () => {
+        return {
+            focusScore,
+            interruptions
+        };
+    };
+
     const calcEarlyStopPenalty = (mode, secondsRemaining) => {
         if (mode !== "focus") return 0;
 
@@ -54,5 +61,6 @@ export default function useFocusPenalty(getModeTime) {
         registerReset,
         registerInterrupt,
         onSessionComplete,
+        getCurrentScore
     };
 }
